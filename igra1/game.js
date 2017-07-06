@@ -35,6 +35,23 @@ function drawHighscores()
     // clear container's current content
     container.empty();
 
+    var str = "";
+    str += "<table id='hTable'>";
+    str += "<tr class='hRow'>";
+    str += "<td class='hRank'>rank</td>";
+    str += "<td class='hName'>name</td>";
+    str += "<td class='hScore'>score</td>";
+    str += "</tr>";
+    for(var i = 0; i < 10; i++) {
+        str += "<tr class='hRow'>";
+        str += "<td class='hRank'>" + (i+1) + ".</td>";
+        str += "<td class='hName'></td>";
+        str += "<td class='hScore'></td>";
+        str += "</tr>";
+    }
+    str += "</table>";
+    container.append(str);
+
     // append back to menu button
     container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
 }

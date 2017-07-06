@@ -1,5 +1,5 @@
 /*======================================================================================================================
-                                    Tic-Tac-NO functionality implementation
+                                        Tic-Tac-NO functionality implementation
 ======================================================================================================================*/
 
 /*===============================================  GLOBAL VARIABLES  =================================================*/
@@ -39,7 +39,8 @@ function drawPlay()
 {
     // clear container's current content
     container.empty();
-    // append objects
+
+    // append player names
     container.append("<p id='p1'>Player1:" + " " + player1 + "</p><p id='p2'>Player2:" + " " + player2 + "</p>")
     var str = "";
     str += "<table>";
@@ -61,6 +62,7 @@ function drawPlay()
 
     // append game table
     container.append(str);
+
     // append back to menu button
     container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
 
@@ -71,6 +73,23 @@ function drawHighscores()
 {
     // clear container's current content
     container.empty();
+
+    var str = "";
+    str += "<table id='hTable'>";
+    str += "<tr class='hRow'>";
+    str += "<td class='hRank'>rank</td>";
+    str += "<td class='hName'>name</td>";
+    str += "<td class='hScore'>score</td>";
+    str += "</tr>";
+    for(var i = 0; i < 10; i++) {
+        str += "<tr class='hRow'>";
+        str += "<td class='hRank'>" + (i+1) + ".</td>";
+        str += "<td class='hName'></td>";
+        str += "<td class='hScore'></td>";
+        str += "</tr>";
+    }
+    str += "</table>";
+    container.append(str);
 
     // append back to menu button
     container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");

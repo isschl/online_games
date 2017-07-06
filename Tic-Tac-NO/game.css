@@ -16,10 +16,19 @@
     height: 120px;
     background-color: #000000;
 }
-table {
-    margin: 0 auto;
+table { margin: 0 auto; }
+#hTable { margin-top: 100px; }
+
+.hRank, .hName, .hScore {
+    height: 20px;
+    border: 1px solid black;
+    background-color: #ffffff;
+    text-align: center;
 }
-td {
+.hName { width: 150px; }
+.hScore { width: 70px; }
+
+.clickable {
     width: 40px;
     height: 40px;
     background-color: #ffffff;
@@ -61,9 +70,7 @@ td {
     font-size: 30px;
     background-color: #a0000f;
 }
-#help {
-    background-color: #ff00ff;
-}
+#help { background-color: #ff00ff; }
 
 #back {
     width: 100px;
