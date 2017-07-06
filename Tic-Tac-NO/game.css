@@ -1,0 +1,79 @@
+#title {
+    text-align: center;
+    color: #0000ff;
+}
+
+#gameContainer {
+    width: 90%;
+    height: 500px;
+    margin: 0 auto;
+    background-color: gray;
+    border: 2px solid black;
+    position: relative;
+}
+#c00, #c01, #c02, #c10, #c11, #c12, #c20, #c21, #c22 {
+    width: 120px;
+    height: 120px;
+    background-color: #000000;
+}
+table {
+    margin: 0 auto;
+}
+td {
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff;
+}
+
+#p1 {
+    width: 50%;
+    display: inline-block;
+    color: #ff0000;
+    text-align: left;
+}
+
+#p2 {
+    width: 50%;
+    display: inline-block;
+    color: #0000ff;
+    text-align: right;
+}
+
+.menuButtons {
+    width: 200px;
+    height: 60px;
+    margin: 0 auto;
+    border-radius: 25px;
+    border: 2px solid #000000;
+    text-align: center;
+    font-size: 40px;
+    line-height: 60px;
+}
+#play {
+    background-color: #00ff00;
+    margin-top: 130px;
+}
+#settings {
+    font-size: 35px;
+    background-color: #123456;
+}
+#highscores {
+    font-size: 30px;
+    background-color: #a0000f;
+}
+#help {
+    background-color: #ff00ff;
+}
+
+#back {
+    width: 100px;
+    height: 30px;
+    background-color: yellow;
+    border: 1px solid #000000;
+    text-align: center;
+    font-size: 15px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    line-height: 30px;
+}
