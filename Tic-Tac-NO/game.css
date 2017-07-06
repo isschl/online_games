@@ -35,14 +35,19 @@ table { margin: 0 auto; }
 }
 
 #p1 {
-    width: 50%;
+    width: 33%;
     display: inline-block;
     color: #ff0000;
     text-align: left;
 }
-
+#score {
+    width: 33%;
+    display: inline-block;
+    color: #000000;
+    text-align: center;
+}
 #p2 {
-    width: 50%;
+    width: 33%;
     display: inline-block;
     color: #0000ff;
     text-align: right;
