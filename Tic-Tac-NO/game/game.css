@@ -1,0 +1,17 @@
+#title {
+    text-align: center;
+    color: blue;
+}
+#c00, #c01, #c02, #c10, #c11, #c12, #c20, #c21, #c22 {
+    width: 180px;
+    height: 180px;
+    background-color: #000000;
+}
+table {
+    margin: 0 auto;
+}
+td {
+    width: 60px;
+    height: 60px;
+    background-color: #ffffff;
+}
