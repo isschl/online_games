@@ -17,7 +17,7 @@ function spremiRezultat($user)
 			"AND title LIKE :naziv");
 			$st->execute(array('korisnik' => $user, 'naziv' => $igra));
 		}
-		catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+		catch( PDOException $e ) { exit( 'GreÅ¡ka u bazi: ' . $e->getMessage() ); }
 	
 		$row = $st->fetch();
 		if($row === false)
@@ -30,13 +30,13 @@ function spremiRezultat($user)
 			echo 'Ubacih u bazu: igra = '.$igra.', korisnik = '.
 				$user.', bodovi = '.$bodovi.'.';
 		}
-		catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+		catch( PDOException $e ) { exit( 'GreÅ¡ka u bazi: ' . $e->getMessage() ); }
 	
 
 		}	
 		else
 		{
-			if(intval($row['score']) > $bodovi)
+			if(intval($row['score']) >= $bodovi)
 				echo 'Ovo ti nije najve&#263;i <em>score</em>!';
 			else //bravo, bolji rezultat - spremi ga
 			{
@@ -49,7 +49,7 @@ function spremiRezultat($user)
 			echo 'Osvje&#382;ih bazu: igra = '.$igra.', korisnik = '.
 				$user.', bodovi = <b>'.$bodovi.'</b>.';
 			}
-		catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+		catch( PDOException $e ) { exit( 'GreÅ¡ka u bazi: ' . $e->getMessage() ); }
 			}
 		}
 	}
