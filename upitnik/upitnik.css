@@ -26,7 +26,8 @@
 }
 
 #question{
-	background-color: grey;
+	background-color: white;
+	color: blue;
 	font-size: 150%;
 	width: 90%;
 }
