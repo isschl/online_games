@@ -5,20 +5,22 @@
 
 function ispisiLoginFormu($poruka)
 {
-	echo '<p style="color: red" >' . $poruka . '</p>'
-	.'Korisni&#269;ko ime: <input type="text" id="username" />'
-	.'&#352;ifra: <input type="password" id="password" />'
+	echo '<p style="color: red" >'
+	. $poruka . '</p><label for="username">'
+	.' Korisni&#269;ko ime: </label> '
+        .' <input type="text" id="username" /> <label for="password">'
+	.' &#352;ifra: </label> <input type="password" id="password" />'
 	.'<input type="button" id="loginklasa1" value="Log In">'
-	.'<form method="post" action="../utils/registracija.php">'
-	.'Novi ste ovdje?'
-	.'<input type="submit" value="Registracija" >'
+	.'<form style="display: inline-block" method="post" action="../utils/registracija.php">'
+	.'<label for="reg"> Novi ste ovdje? </label>'
+	.'<input type="submit" id="reg" value="Registracija" >'
 	.'</form>';
 }
 
 function ispisiLogoutFormu($user)
 {
-	echo '<p style="color: green">Uspje&#353;no ste prijavljeni, '
-		.$user.'! </p>'
+	echo '<label for="loginklasa2" style="color: green">Uspje&#353;no ste prijavljeni, '
+		.$user.'! </label>'
 		.'<input type="button" id="loginklasa2" value="Log Out" >';
 	
 }
