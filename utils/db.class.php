@@ -1,6 +1,6 @@
 <?php
 
-//na mjestu gdje stoji OVDJEUPISISVOJUBAZU upisite svoje prezime
+//na mjestu gdje stoji horvat upisite svoje prezime
 
 class DB
 {
@@ -15,7 +15,7 @@ class DB
 	    {
 	    	try
 	    	{
-		    	DB::$db = new PDO( "mysql: host=rp2.studenti.math.hr; dbname=OVDJEUPISISVOJUBAZU; charset=utf8", 'student', 'pass.mysql' );
+		    	DB::$db = new PDO( "mysql: host=rp2.studenti.math.hr; dbname=horvat; charset=utf8", 'student', 'pass.mysql' );
 		    	DB::$db-> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		    }
 		    catch( PDOException $e ) { exit( 'PDO Error: ' . $e->getMessage() ); }
