@@ -194,6 +194,34 @@ $(document).ready(function()
 	function randomBoja() {
   	var boja = 'rgb('+Math.floor(Math.random()*256)+','+Math.floor(Math.random()*256)+','+Math.floor(Math.random()*256)+')';
   	return boja;
-}
+	}
 
+	var element = '<p id="podaci" style="display:inline"> Created by: ';
+	element += '<b text="red"> isschl </b>';
+	element += ' Povratak: ';
+	element += '<a href="..">';
+	element += '<img src="../utils/data/homeButton.jpg"';
+	element += ' id="returnPicture"';
+	element += ' alt="HOME" border="0" />';
+	element += '</a></p>';
+
+	$("#zavrsni")
+	.html(element)
+	.css("font-size","120%")
+	.append('<audio controls autoplay loop style="display:inline" ><source src="../utils/data/Song'+Math.floor(Math.random()*3+1)+'.mp3" type="audio/ogg">Your browser does not support the audio element.</audio>');
+
+	namjesti();
+
+	function namjesti()
+	{
+		$("#zavrsni")	
+		.css("width",Math.floor($(window).width()*0.9))
+		.css("height",Math.floor(($(window).height())*0.05));
+		$("#returnPicture")
+		.css("height",Math.floor(($(window).height())*0.05))
+		.css("width",Math.floor(($(window).width())*0.05));
+	}
+
+	$( window ).resize(namjesti);
+	
 } );
