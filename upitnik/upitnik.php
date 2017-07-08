@@ -1,5 +1,5 @@
 <?php
-	require_once 'db.class.php';
+	require_once '../utils/db.class.php';
 
 	function sendJSONandExit($message){
 		header('Content-type: application/json; charset=utf-8');
@@ -18,7 +18,7 @@
 			$st = $db->prepare( "SELECT id FROM pitanja");
 			$st->execute();
 		}
-		catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+		catch( PDOException $e ) { exit( 'GreÅ¡ka u bazi: ' . $e->getMessage() ); }
 		
 		while($row=$st->fetch())
 			++$ukupno;
@@ -34,7 +34,7 @@
 			$st = $db->prepare( "SELECT * FROM pitanja WHERE id LIKE :id ");
 			$st->execute( array( 'id' => $id ) );
 		}
-		catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+		catch( PDOException $e ) { exit( 'GreÅ¡ka u bazi: ' . $e->getMessage() ); }
 		
 		$row=$st->fetch();
 
