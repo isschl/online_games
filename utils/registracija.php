@@ -14,7 +14,7 @@ function provjeri()
 		$st = $db->prepare( 'SELECT * FROM userList WHERE regseq=:regseq' );
 		$st->execute( array( 'regseq' => $_GET['niz'] ) );
 	}
-	catch( PDOException $e ) { exit( 'Gre�ka u bazi: ' . $e->getMessage() ); }
+	catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
 
 	if( $st->rowCount() === 0 )
 	{
@@ -42,14 +42,14 @@ function provjeri()
 		$st = $db->prepare( "UPDATE userList SET hasregistered = 'jeste' WHERE username LIKE :username");
 		$st->execute( array( 'username' => $polje[$i] ) );
 	}
-	catch( PDOException $e ) { exit( 'Gre�ka u bazi: ' . $e->getMessage() ); }
+	catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
 	
 	return 'ok';
 }
 
 function povratakForma()
 { ?>
-	<a href="../glavni/glavni.html" > Povratak na po&#269;etnu stranicu </a>
+	<a href=".." > Povratak na po&#269;etnu stranicu </a>
 <?php }
 
 function zahvala()
@@ -79,7 +79,7 @@ function forma($greska)
 	<input type="submit" value="Prijavi" />
 	</form>
 	<hr />
-	<a href="../glavni/glavni.html" > Povratak na po&#269;etnu stranicu </a>
+	<a href=".." > Povratak na po&#269;etnu stranicu </a>
 <?php }
 
 function analiziraj_POST_login()
@@ -122,7 +122,7 @@ function analiziraj_POST_login()
 		$st = $db->prepare( 'SELECT * FROM userList WHERE username=:username' );
 		$st->execute( array( 'username' => $_POST['username'] ) );
 	}
-	catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+	catch( PDOException $e ) { exit( 'GreĹˇka u bazi: ' . $e->getMessage() ); }
 
 	if( $st->rowCount() !== 0 )
 	{
@@ -137,7 +137,7 @@ function analiziraj_POST_login()
 
 	$to       = $_POST['email'];
 	$subject  = 'Registracijski mail';
-	$message  = 'Poštovani ' . $_POST['username'] . "!\nZa dovršetak registracije kliknite na sljedeći link: ";
+	$message  = 'PoĹˇtovani ' . $_POST['username'] . "!\nZa dovrĹˇetak registracije kliknite na sljedeÄ‡i link: ";
 	$message .= 'http://' . $_SERVER['SERVER_NAME'] . htmlentities( dirname( $_SERVER['PHP_SELF'] ) ) . '/registracija.php?niz=' . $reg_seq . "\n";
 	$headers  = 'From: rp2@studenti.math.hr' . "\r\n" .
 		    'Reply-To: rp2@studenti.math.hr' . "\r\n" .
@@ -161,7 +161,7 @@ function analiziraj_POST_login()
 				'hasregistered' => 'nije', 
 				'reg_seq'  => $reg_seq ) );
 	}
-	catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+	catch( PDOException $e ) { exit( 'GreĹˇka u bazi: ' . $e->getMessage() ); }
 	
 
 	$greska = 'ok';
