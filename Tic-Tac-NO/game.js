@@ -12,7 +12,7 @@ var player2Color = "blue";
 var playerColors = "pc1";
 var currentPlayer = -1;
 var playingField = [-1,-1];
-var highscores = [{"igrac": "Pero", "bodovi":30}, {"igrac": "Mirko", "bodovi":40}];
+var highscores = [{"player": "","score":0},{"player": "","score":0},{"player": "","score":0},{"player": "","score":0},{"player": "","score":0}];
 var moveCount = 41;
 var TTN;
 
@@ -175,6 +175,22 @@ function processMove(row,column)
         $("#gameTable").css("background-color", (currentPlayer == -1) ? player2Color : player1Color);
         container.empty();
         container.append("<div id='gameOver'>Game Over! " + ((currentPlayer == -1) ? player2 : player1) + " has won.</div>");
+        // add score to database
+        $.ajax(
+            {
+                url : "../utils/spremiRezultat.php ",
+                data : { title : "Tic-Tac-NO", score : moveCount },
+                success: function(data)
+                {
+                    console.log(data);
+                },
+                error: function(xhr, status)
+                {
+                    if(status!==null)
+                        console.log("Error prilikom Ajax poziva: "+status);
+                },
+                async: false
+            });
         return;
     }
     if(currentPlayer == 1)
@@ -259,15 +275,40 @@ function drawHighscores()
     container.append(str);
 
     // ajax get highscores...
+    $.ajax(
+        {
+            url : " ../utils/dohvatiListu.php ",
+            data : { title : "Tic-Tac-NO" },
+            type: "POST",
+            success: function(data)
+            {
+                highscores[0].player = data.prviIgrac;
+                highscores[0].score = data.prviBodovi;
+                highscores[1].player = data.drugiIgrac;
+                highscores[1].score = data.drugiBodovi;
+                highscores[2].player = data.treciIgrac;
+                highscores[2].score = data.treciBodovi;
+                highscores[3].player = data.cetvrtiIgrac;
+                highscores[3].score = data.cetvrtiBodovi;
+                highscores[4].player = data.petiIgrac;
+                highscores[4].score = data.petiBodovi;
+            },
+            error: function(xhr, status)
+            {
+                if(status!==null)
+                    console.log("Error prilikom Ajax poziva: "+status);
+            },
+            async: false
+        });
 
     // fill table with scores
     var hNames = $(".hName");
-    for(var i = 0; i < 2; i++) {
-        hNames.eq(i+1).text(highscores[i].igrac);
+    for(var i = 0; i < 5; i++) {
+        hNames.eq(i+1).text(highscores[i].player);
     }
     var hScores = $(".hScore");
-    for(var i = 0; i < 2; i++) {
-        hScores.eq(i+1).text(highscores[i].bodovi);
+    for(var i = 0; i < 5; i++) {
+        hScores.eq(i+1).text(highscores[i].score);
     }
 
     // append back to menu button
