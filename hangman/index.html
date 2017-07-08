@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>The Hangman</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+	<script type="text/javascript" src="../utils/login.js"> </script>
+	<script type="text/javascript" src="../utils/upute.js"> </script>
+	<script type="text/javascript" src="hangman.js"> </script>
+	<link rel="stylesheet" type="text/css" href="hangman.css">
+</head>
+<body>
+	<div id="pocetni"></div>
+	 
+	<h2 id="upitnik" style="display:inline-block"> Dobrodo&#353;li u igru <b style="color: red"> Vješač! </b> </h2>
+	
+	<input style="display:inline-block" type = "button" value = "Upute za igru" id = "upute" />
+	<div id="tekstuputa">
+		<h2> Igra <i style="color:red">The Hangman </i> <small>(hrv. Vješač)</small> </h2>
+		<p>Odabrali smo za Vas neku riječ. Slovo po slovo, pokušajte ih
+		otkriti sve (prije nego vas Vješač dohvati!).</p> 
+	</div>
+	<hr>
+	
+	<div id="container" style="width:100%;">
+                                   
+  	<div id="left" style="width:600;display:inline-block"> This is left panel </div>                     
+  	<div id="right" style="width:auto;display:inline-block"> This is right panel </div>                   
+	
+	</div> <br/>
+	<hr>
+	<div id="zavrsni"></div>
+</body>
