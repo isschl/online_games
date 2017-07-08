@@ -4,8 +4,9 @@
 
 /*===============================================  GLOBAL VARIABLES  =================================================*/
 var container;
+var gameType = "AI";
 var backgroundColor = "grey";
-var player1 = "guest_player"; // default player1 name
+var player1 = "You"; // default player1 name
 var player1Color =  "red";
 var player2 = "computer"; // default player2 name
 var player2Color = "blue";
@@ -75,35 +76,44 @@ class Game {
         return ret;
     }
 
-    winMove(r1, c1, r2, c2, r3, c3) {
+    winMove(r1, c1, r2, c2, r3, c3, who) {
         var field = this.state[playingField.row][playingField.column];
-        if(field[r1][c1] == currentPlayer && field[r2][c2] == currentPlayer && field[r3][c3] == 0)
+        if(field[r1][c1] == who && field[r2][c2] == who && field[r3][c3] == 0)
             return 3*r3+c3;
-        if(field[r1][c1] == currentPlayer && field[r2][c2] == 0 && field[r3][c3] == currentPlayer)
+        if(field[r1][c1] == who && field[r2][c2] == 0 && field[r3][c3] == who)
             return 3*r2+c2;
-        if(field[r1][c1] == 0 && field[r2][c2] == currentPlayer && field[r3][c3] == currentPlayer)
+        if(field[r1][c1] == 0 && field[r2][c2] == who && field[r3][c3] == who)
             return 3*r1+c1;
         return -1;
     }
 
-    findWin() {
+    findWin(who) {
         var win = -1;
-        win = this.winMove(0,0,0,1,0,2);
-        win = this.winMove(1,0,1,1,1,2);
-        win = this.winMove(2,0,2,1,2,2);
-        win = this.winMove(0,0,1,0,2,0);
-        win = this.winMove(0,1,1,1,2,1);
-        win = this.winMove(0,2,1,2,2,2);
-        win = this.winMove(0,0,1,1,2,2);
-        win = this.winMove(0,2,1,1,2,0);
+        win = this.winMove(0,0,0,1,0,2,who);
+        if(win > -1) return win;
+        win = this.winMove(1,0,1,1,1,2,who);
+        if(win > -1) return win;
+        win = this.winMove(2,0,2,1,2,2,who);
+        if(win > -1) return win;
+        win = this.winMove(0,0,1,0,2,0,who);
+        if(win > -1) return win;
+        win = this.winMove(0,1,1,1,2,1,who);
+        if(win > -1) return win;
+        win = this.winMove(0,2,1,2,2,2,who);
+        if(win > -1) return win;
+        win = this.winMove(0,0,1,1,2,2,who);
+        if(win > -1) return win;
+        win = this.winMove(0,2,1,1,2,0,who);
         return win;
     }
 
     computerMove() {
-        var win = this.findWin();
-        // check to win
-        if(win > -1) {
+        var win = this.findWin(currentPlayer);
+        var block = this.findWin(-1*currentPlayer);
+        if(win > -1) { // if can win
             processMove(Math.floor(win/3),win%3);
+        } else if(block > -1) { // if can block opponent's win
+            processMove(Math.floor(block/3),block%3);
         } else {
             // choose random available
             var field = this.state[playingField.row][playingField.column];
@@ -223,7 +233,6 @@ function processMove(row,column)
     if(ret > 2) {
         // change everything to winner color
         $("#gameTable").css("background-color", (currentPlayer == -1) ? player2Color : player1Color);
-        container.empty();
         // append win text
         container.append("<div id='gameOver'>Game Over! " + ((currentPlayer == -1) ? player2 : player1) + " has won.</div>");
         // append back to menu button
@@ -247,7 +256,8 @@ function processMove(row,column)
         return;
     }
     if(currentPlayer == 1)
-        TTN.computerMove();
+        if (gameType == "AI")
+            TTN.computerMove();
     else {// increment move count
         moveCount--;
         $("#score").text("Moves left: " + moveCount);
@@ -373,37 +383,39 @@ function drawSettings()
     // clear container's current content
     container.empty();
 
-    var str = "<form id='settingsForm'>";
+    container.append("<div id='settDiv'><form id='settingsForm'></form></div>");
 
-    str += "Choose background color:<br>";
+    var str = "<span class='subtitle'>Choose background color:</span><br>";
     str += "<input type='radio' name='bcolorSettings' value='white'> White<br>";
     str += "<input type='radio' name='bcolorSettings' value='grey'> Grey<br>";
     str += "<input type='radio' name='bcolorSettings' value='brown'> Brown";
 
-    str += "<br><br>Choose player colors:<br>";
+    str += "<br><br><span class='subtitle'>Choose player colors:</span><br>";
     str += "<input type='radio' name='pcolorSettings' value='pc1'> Red & Blue<br>";
     str += "<input type='radio' name='pcolorSettings' value='pc2'> Purple & Yellow<br>";
 
+    str += "<br><br><span class='subtitle'>Choose game type</span><br>";
+    str += "<input type='radio' name='gtypeSettings' value='AI'> You vs. AI<br>";
+    str += "<input type='radio' name='gtypeSettings' value='2off'> You vs. Friend<br>";
+
     str += "</form>";
 
-    container.append(str);
+    $("#settingsForm").append(str);
 
     var settingsForm = $("#settingsForm input:radio");
     // set default checked current background color
     settingsForm.filter("[value=" + backgroundColor + "]").prop('checked', true);
     settingsForm.filter("[value=" + playerColors + "]").prop('checked', true);
+    settingsForm.filter("[value=" + gameType + "]").prop('checked', true);
     // set action on click
     settingsForm.on("click", function() {
         // get value of object that was clicked
         if($(this).attr("name") == "bcolorSettings") {
-            var clr = $(this).attr("value");
-            // set color to container
-            backgroundColor = clr;
-            container.css("background-color", backgroundColor);
-        } else {
-            var clrs = $(this).attr("value");
-            // set color to container
-            playerColors = clrs;
+            // set container color
+            container.css("background-color", $(this).attr("value"));
+        } else if($(this).attr("name") == "pcolorSettings"){
+            // set player colors
+            playerColors = $(this).attr("value");
             if(playerColors == "pc1") {
                 player1Color = "red";
                 player2Color = "blue";
@@ -411,6 +423,13 @@ function drawSettings()
                 player1Color = "purple";
                 player2Color = "yellow";
             }
+        } else {
+            // set game type
+            gameType = $(this).attr("value");
+            if(gameType == "AI")
+                player2 = "computer";
+            else
+                player2 = "Friend";
         }
     });
 
@@ -423,13 +442,14 @@ function drawHelp()
     // clear container's current content
     container.empty();
 
-    container.append("<div id='helpText'>");
-    container.append("Combine small Tic-Tac-Toe wins to win a large Tic-Tac-Toe(NO)<br>");
-    container.append("Allowed small Tic-Tac-Toe playing field is determined by opponent's last move.<br>");
-    container.append("<h4>Example:</h4><br>Player1 plays in bottom middle square of playing field (no matter which)");
-    container.append("<br>Now the playing field for Player2 becomes the bottom middle Tic-Tac-Toe field");
-    container.append("<br>Playing field is marked with gren edges");
-    container.append("</div>");
+    container.append("<div id='helpText'></div>");
+    var str = "";
+    str += "Combine small Tic-Tac-Toe wins to win a large Tic-Tac-Toe(NO).<br>";
+    str += "Allowed small Tic-Tac-Toe playing field is determined by opponent's last move.<br><br>";
+    str += "<span class='subtitle'>Example:</span><br>Player1 plays in bottom middle square of playing field (no matter which).<br>";
+    str += "Now the playing field for Player2 becomes the bottom middle Tic-Tac-Toe field.<br>";
+    str += "Playing field is marked with green edges.<br>";
+    $("#helpText").append(str);
 
     // append back to menu button
     container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
