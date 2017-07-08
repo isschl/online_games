@@ -75,56 +75,79 @@ class Game {
         return ret;
     }
 
-    computerMove() {
-        var available = [];
-        for(var i = 0; i < 3; i++)
-            for(var j = 0; j < 3; j++)
-                if(this.state[playingField.row][playingField.column][i][j] == 0)
-                    available.push(3*i+j);
-        var r = Math.floor(Math.random() * available.length);
-        processMove(Math.floor(available[r]/3),available[r]%3);
+    winMove(r1, c1, r2, c2, r3, c3) {
+        var field = this.state[playingField.row][playingField.column];
+        if(field[r1][c1] == currentPlayer && field[r2][c2] == currentPlayer && field[r3][c3] == 0)
+            return 3*r3+c3;
+        if(field[r1][c1] == currentPlayer && field[r2][c2] == 0 && field[r3][c3] == currentPlayer)
+            return 3*r2+c2;
+        if(field[r1][c1] == 0 && field[r2][c2] == currentPlayer && field[r3][c3] == currentPlayer)
+            return 3*r1+c1;
+        return -1;
     }
 
-    checkFull(row,column) {
-        for(var i = 0; i < 3; i++)
-            for(var j = 0; j < 3; j++)
-                if(this.state[playingField.row][playingField.column][i][j] == 0)
-                    return false;
-        this.fullState[playingField.row][playingField.column] = true;
-        return true;
+    findWin() {
+        var win = -1;
+        win = this.winMove(0,0,0,1,0,2);
+        win = this.winMove(1,0,1,1,1,2);
+        win = this.winMove(2,0,2,1,2,2);
+        win = this.winMove(0,0,1,0,2,0);
+        win = this.winMove(0,1,1,1,2,1);
+        win = this.winMove(0,2,1,2,2,2);
+        win = this.winMove(0,0,1,1,2,2);
+        win = this.winMove(0,2,1,1,2,0);
+        return win;
+    }
+
+    computerMove() {
+        var win = this.findWin();
+        // check to win
+        if(win > -1) {
+            processMove(Math.floor(win/3),win%3);
+        } else {
+            // choose random available
+            var field = this.state[playingField.row][playingField.column];
+            var available = [];
+            for (var i = 0; i < 3; i++)
+                for (var j = 0; j < 3; j++)
+                    if (field[i][j] == 0)
+                        available.push(3 * i + j);
+            var r = Math.floor(Math.random() * available.length);
+            processMove(Math.floor(available[r] / 3), available[r] % 3);
+        }
     }
 
     smallWin(row,column) {
         var field = this.state[row][column];
-        if(field[0][0] == currentPlayer && field[0][1] == currentPlayer && field[0][2] == currentPlayer) {
+        if(field[0][0] + field[0][1] + field[0][2] == 3*currentPlayer) {
             this.bigState[row][column] = currentPlayer;
             return true;
         }
-        if(field[1][0] == currentPlayer && field[1][1] == currentPlayer && field[1][2] == currentPlayer) {
+        if(field[1][0] + field[1][1] + field[1][2] == 3*currentPlayer) {
             this.bigState[row][column] = currentPlayer;
             return true;
         }
-        if(field[2][0] == currentPlayer && field[2][1] == currentPlayer && field[2][2] == currentPlayer) {
+        if(field[2][0] + field[2][1] + field[2][2] == 3*currentPlayer) {
             this.bigState[row][column] = currentPlayer;
             return true;
         }
-        if(field[0][0] == currentPlayer && field[1][0] == currentPlayer && field[2][0] == currentPlayer) {
+        if(field[0][0] + field[1][0] + field[2][0] == 3*currentPlayer) {
             this.bigState[row][column] = currentPlayer;
             return true;
         }
-        if(field[0][1] == currentPlayer && field[1][1] == currentPlayer && field[2][1] == currentPlayer) {
+        if(field[0][1] + field[1][1] + field[2][1] == 3*currentPlayer) {
             this.bigState[row][column] = currentPlayer;
             return true;
         }
-        if(field[0][2] == currentPlayer && field[1][2] == currentPlayer && field[2][2] == currentPlayer) {
+        if(field[0][2] + field[1][2] + field[2][2] == 3*currentPlayer) {
             this.bigState[row][column] = currentPlayer;
             return true;
         }
-        if(field[0][0] == currentPlayer && field[1][1] == currentPlayer && field[2][2] == currentPlayer) {
+        if(field[0][0] + field[1][1] + field[2][2] == 3*currentPlayer) {
             this.bigState[row][column] = currentPlayer;
             return true;
         }
-        if(field[2][0] == currentPlayer && field[1][1] == currentPlayer && field[0][2] == currentPlayer) {
+        if(field[2][0] + field[1][1] + field[0][2] == 3*currentPlayer) {
             this.bigState[row][column] = currentPlayer;
             return true;
         }
@@ -132,21 +155,21 @@ class Game {
     }
 
     bigWin() {
-        if(this.bigState[0][0] == currentPlayer && this.bigState[0][1] == currentPlayer && this.bigState[0][2] == currentPlayer)
+        if(this.bigState[0][0] + this.bigState[0][1] + this.bigState[0][2] == 3*currentPlayer)
             return true;
-        if(this.bigState[1][0] == currentPlayer && this.bigState[1][1] == currentPlayer && this.bigState[1][2] == currentPlayer)
+        if(this.bigState[1][0] + this.bigState[1][1] + this.bigState[1][2] == 3*currentPlayer)
             return true;
-        if(this.bigState[2][0] == currentPlayer && this.bigState[2][1] == currentPlayer && this.bigState[2][2] == currentPlayer)
+        if(this.bigState[2][0] + this.bigState[2][1] + this.bigState[2][2] == 3*currentPlayer)
             return true;
-        if(this.bigState[0][0] == currentPlayer && this.bigState[1][0] == currentPlayer && this.bigState[2][0] == currentPlayer)
+        if(this.bigState[0][0] + this.bigState[1][0] + this.bigState[2][0] == 3*currentPlayer)
             return true;
-        if(this.bigState[0][1] == currentPlayer && this.bigState[1][1] == currentPlayer && this.bigState[2][1] == currentPlayer)
+        if(this.bigState[0][1] + this.bigState[1][1] + this.bigState[2][1] == 3*currentPlayer)
             return true;
-        if(this.bigState[0][2] == currentPlayer && this.bigState[1][2] == currentPlayer && this.bigState[2][2] == currentPlayer)
+        if(this.bigState[0][2] + this.bigState[1][2] + this.bigState[2][2] == 3*currentPlayer)
             return true;
-        if(this.bigState[0][0] == currentPlayer && this.bigState[1][1] == currentPlayer && this.bigState[2][2] == currentPlayer)
+        if(this.bigState[0][0] + this.bigState[1][1] + this.bigState[2][2] == 3*currentPlayer)
             return true;
-        if(this.bigState[2][0] == currentPlayer && this.bigState[1][1] == currentPlayer && this.bigState[0][2] == currentPlayer)
+        if(this.bigState[2][0] + this.bigState[1][1] + this.bigState[0][2] == 3*currentPlayer)
             return true;
         return false;
     }
