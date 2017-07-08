@@ -4,12 +4,16 @@
 
 /*===============================================  GLOBAL VARIABLES  =================================================*/
 var container;
+var backgroundColor = "grey";
 var player1 = "guest_player"; // default player1 name
+var player1Color =  "red";
 var player2 = "computer"; // default player2 name
+var player2Color = "blue";
+var playerColors = "pc1";
 var currentPlayer = -1;
 var playingField = [-1,-1];
-var highscores = [];
-var moveCount = 0;
+var highscores = [{"igrac": "Pero", "bodovi":30}, {"igrac": "Mirko", "bodovi":40}];
+var moveCount = 41;
 var TTN;
 
 /*===================================================  GAME LOGIC  ===================================================*/
@@ -60,7 +64,7 @@ class Game {
                 if(this.state[playingField[0]][playingField[1]][i][j] == 0)
                     available.push(3*i+j);
         var r = Math.floor(Math.random() * available.length);
-        processMove(Math.floor(r/3),r%3);
+        processMove(Math.floor(available[r]/3),available[r]%3);
     }
 
     smallWin(row,column) {
@@ -155,7 +159,7 @@ function processMove(row,column)
         // reset previous playing field color
         $(old_cid).css("background-color", old_clr);
         // change field's color
-        square.css("background-color", (currentPlayer == -1) ? "#ff0000" : "#0000ff");
+        square.css("background-color", (currentPlayer == -1) ? player1Color : player2Color);
         // set new playing field
         var cid = "#c" + playingField[0] + playingField[1];
         $(cid).css("background-color", "#00ff00");
@@ -164,20 +168,20 @@ function processMove(row,column)
     }
     if(ret > 1) {
         // change color of won field
-        $(old_cid).css("background-color", (currentPlayer == -1) ? "#0000ff" : "#ff0000");
+        $(old_cid).css("background-color", (currentPlayer == -1) ? player2Color : player1Color);
     }
     if(ret > 2) {
         // change everything to winner color
-        $("#gameTable").css("background-color", (currentPlayer == -1) ? "#0000ff" : "#ff0000");
+        $("#gameTable").css("background-color", (currentPlayer == -1) ? player2Color : player1Color);
         container.empty();
-        container.append("Game Over! " + ((currentPlayer == -1) ? player2 : player1) + " has won.");
+        container.append("<div id='gameOver'>Game Over! " + ((currentPlayer == -1) ? player2 : player1) + " has won.</div>");
         return;
     }
     if(currentPlayer == 1)
         TTN.computerMove();
     else {// increment move count
-        moveCount++;
-        $("#score").text("Moves: " + moveCount);
+        moveCount--;
+        $("#score").text("Moves left: " + moveCount);
     }
 }
 
@@ -186,6 +190,7 @@ function drawMenu()
 {
     // clear container's current content
     container.empty();
+
     // append 4 menu buttons
     container.append("<div id='play' class='menuButtons' onclick='drawPlay()'>" + "PLAY</div>");
     container.append("<div id='highscores' class='menuButtons' onclick='drawHighscores()'>" + "HIGHSCORES</div>");
@@ -199,7 +204,10 @@ function drawPlay()
     container.empty();
 
     // append player names
-    container.append("<p id='p1'>Player1:" + " " + player1 + "</p><p id='score'>Moves: 0</p><p id='p2'>Player2:" + " " + player2 + "</p>")
+    container.append("<p id='p1'>Player1:" + " " + player1 + "</p><p id='score'>Moves left: 41</p><p id='p2'>Player2:" + " " + player2 + "</p>")
+    $("#p1").css("color", player1Color);
+    $("#p2").css("color", player2Color);
+
     var str = "";
     str += "<table id='gameTable'>";
     for(var i=0; i<3; i++) {
@@ -240,7 +248,7 @@ function drawHighscores()
     str += "<td class='hName'>name</td>";
     str += "<td class='hScore'>score</td>";
     str += "</tr>";
-    for(var i = 0; i < 10; i++) {
+    for(var i = 0; i < 5; i++) {
         str += "<tr class='hRow'>";
         str += "<td class='hRank'>" + (i+1) + ".</td>";
         str += "<td class='hName'></td>";
@@ -249,6 +257,18 @@ function drawHighscores()
     }
     str += "</table>";
     container.append(str);
+
+    // ajax get highscores...
+
+    // fill table with scores
+    var hNames = $(".hName");
+    for(var i = 0; i < 2; i++) {
+        hNames.eq(i+1).text(highscores[i].igrac);
+    }
+    var hScores = $(".hScore");
+    for(var i = 0; i < 2; i++) {
+        hScores.eq(i+1).text(highscores[i].bodovi);
+    }
 
     // append back to menu button
     container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
@@ -259,6 +279,47 @@ function drawSettings()
     // clear container's current content
     container.empty();
 
+    var str = "<form id='settingsForm'>";
+
+    str += "Choose background color:<br>";
+    str += "<input type='radio' name='bcolorSettings' value='white'> White<br>";
+    str += "<input type='radio' name='bcolorSettings' value='grey'> Grey<br>";
+    str += "<input type='radio' name='bcolorSettings' value='brown'> Brown";
+
+    str += "<br><br>Choose player colors:<br>";
+    str += "<input type='radio' name='pcolorSettings' value='pc1'> Red & Blue<br>";
+    str += "<input type='radio' name='pcolorSettings' value='pc2'> Purple & Yellow<br>";
+
+    str += "</form>";
+
+    container.append(str);
+
+    var settingsForm = $("#settingsForm input:radio");
+    // set default checked current background color
+    settingsForm.filter("[value=" + backgroundColor + "]").prop('checked', true);
+    settingsForm.filter("[value=" + playerColors + "]").prop('checked', true);
+    // set action on click
+    settingsForm.on("click", function() {
+        // get value of object that was clicked
+        if($(this).attr("name") == "bcolorSettings") {
+            var clr = $(this).attr("value");
+            // set color to container
+            backgroundColor = clr;
+            container.css("background-color", backgroundColor);
+        } else {
+            var clrs = $(this).attr("value");
+            // set color to container
+            playerColors = clrs;
+            if(playerColors == "pc1") {
+                player1Color = "red";
+                player2Color = "blue";
+            } else {
+                player1Color = "purple";
+                player2Color = "yellow";
+            }
+        }
+    });
+
     // append back to menu button
     container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
 }
@@ -267,6 +328,14 @@ function drawHelp()
 {
     // clear container's current content
     container.empty();
+
+    container.append("<div id='helpText'>");
+    container.append("Combine small Tic-Tac-Toe wins to win a large Tic-Tac-Toe(NO)<br>");
+    container.append("Allowed small Tic-Tac-Toe playing field is determined by opponent's last move.<br>");
+    container.append("<h4>Example:</h4><br>Player1 plays in bottom middle square of playing field (no matter which)");
+    container.append("<br>Now the playing field for Player2 becomes the bottom middle Tic-Tac-Toe field");
+    container.append("<br>Playing field is marked with gren edges");
+    container.append("</div>");
 
     // append back to menu button
     container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");

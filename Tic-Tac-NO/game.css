@@ -37,7 +37,6 @@ table { margin: 0 auto; }
 #p1 {
     width: 33%;
     display: inline-block;
-    color: #ff0000;
     text-align: left;
 }
 #score {
@@ -49,7 +48,6 @@ table { margin: 0 auto; }
 #p2 {
     width: 33%;
     display: inline-block;
-    color: #0000ff;
     text-align: right;
 }
 
@@ -80,12 +78,43 @@ table { margin: 0 auto; }
 #back {
     width: 100px;
     height: 30px;
-    background-color: yellow;
+    background-color: black;
     border: 1px solid #000000;
     text-align: center;
+    color: white;
     font-size: 15px;
     position: absolute;
     bottom: 0;
     left: 0;
     line-height: 30px;
+}
+
+#gameOver {
+    width: 400px;
+    height: 60px;
+    margin: 0 auto;
+    margin-top: 200px;
+    background-color: pink;
+    border: 2px solid #000000;
+    text-align: center;
+    font-size: 40px;
+    line-height: 60px;
+}
+
+#helpText {
+    width: 200px;
+    height: 120px;
+    position: relative;
+    text-align: center;
+    display: inline-block;
+    align-content: center;
+    font-size: 15px;
+    position: absolute;
+    line-height: 120px;
+}
+
+#colorForm {
+    display: inline-block;
+    align-content: center;
+    position: relative;
 }
