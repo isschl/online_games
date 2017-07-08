@@ -1,6 +1,6 @@
 <?php
 
-require_once '../db.class.php';
+require_once '../../utils/db.class.php';
 
 $db = DB::getConnection();
 
@@ -35,7 +35,7 @@ catch( PDOException $e ) { exit( "PDO error #2: " . $e->getMessage() ); }
 
 echo "Napravio tablicu pitanja .<br />";
 
-//l - lako, s - srednje, t - teöko
+//l - lako, s - srednje, t - te≈°ko
 
 try
 {
