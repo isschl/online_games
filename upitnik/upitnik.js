@@ -34,8 +34,46 @@ $(document).ready(function(){
 
 	}
 
+	function ispuniTablicu(){
+		$.ajax(
+		{
+		url : "../utils/dohvatiListu.php",
+		data : { title : "Upitnik" },
+		type: "POST",
+		success: function(data)
+		{
+		$("#prvi").html('<td>1.</td><td>'+data.prviIgrac+'</td><td>'+data.prviBodovi+'</td>');
+		$("#drugi").html('<td>2.</td><td>'+data.drugiIgrac+'</td><td>'+data.drugiBodovi+'</td>');
+		$("#treci").html('<td>3.</td><td>'+data.treciIgrac+'</td><td>'+data.treciBodovi+'</td>');
+		$("#cetvrti").html('<td>4.</td><td>'+data.cetvrtiIgrac+'</td><td>'+data.cetvrtiBodovi+'</td>');
+		$("#peti").html('<td>5.</td><td>'+data.petiIgrac+'</td><td>'+data.petiBodovi+'</td>');
+		},
+		error: function(xhr, status)
+		{
+			if(status!==null) 
+				console.log("Error prilikom Ajax poziva: "+status);
+		},
+		async: false
+		});
+	}
+
+	function ispuniLijevo(){
+	var sadrzaj = '<p>Highscores</p>';
+	sadrzaj += '<table><tr><th>r.br.</th>';
+	sadrzaj += '<th>Ime igrača</th><th>Bodovi</th>';
+	sadrzaj += '<tr id="prvi"></tr>';
+	sadrzaj += '<tr id="drugi"></tr>';
+	sadrzaj += '<tr id="treci"></tr>';
+	sadrzaj += '<tr id="cetvrti"></tr>';
+	sadrzaj += '<tr id="peti"></tr>';
+	sadrzaj += '</table>';
+	sadrzaj += '<input type="button" class="button" value="Start the game" id="start"/>';
+	$("#left").html(sadrzaj);
+	ispuniTablicu();
+	}
+
 	function pocetno(){
-	$("#left").html('<input type="button" class="button" value="Start the game" id="start"/>');
+	ispuniLijevo();
 	$("#right").html('<p>Za početak kliknite na <em style="color:green">Start the game</em>.</p>');
 	$("#start").css("background-color","#4CAF50");
 	}
@@ -64,10 +102,11 @@ $(document).ready(function(){
 		success: function(data)
 		{
 			$("#PorukaRezultat").html(data);
+			ispuniLijevo();
 		},
 		error: function(xhr, status)
 		{
-			if(status!==null) 
+			if(status!==null)
 				console.log("Error prilikom Ajax poziva: "+status);
 		},
 		async: false
@@ -104,9 +143,7 @@ $(document).ready(function(){
 			poruka += '<button id="btn2">';
 			poruka += 'Spremi rezultat!</button> <p id="PorukaRezultat"></p>';
 			$("#right").html(poruka);
-			$("#left").html('<p id="endPoruka">Kraj igre! Kako vam se svidjela? highscores...</p>');
-
-			$("#left").append('<input type="button" class="button" value="Start the game" id="start"/>');
+			ispuniLijevo();
 			$("#start").css("background-color","#4CAF50");
 		}
 		else {
