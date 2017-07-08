@@ -11,7 +11,7 @@ var player2 = "computer"; // default player2 name
 var player2Color = "blue";
 var playerColors = "pc1";
 var currentPlayer = -1;
-var playingField = [-1,-1];
+var playingField = {"row":-1,"column":-1};
 var highscores = [{"player": "","score":0},{"player": "","score":0},{"player": "","score":0},{"player": "","score":0},{"player": "","score":0}];
 var moveCount = 41;
 var TTN;
@@ -33,21 +33,39 @@ class Game {
         }
         this.state = gameState;
         this.bigState = [[0,0,0],[0,0,0],[0,0,0]];
+        this.fullState= [[0,0,0],[0,0,0],[0,0,0]];
         // reset lobal game values
         currentPlayer = -1;
-        playingField = [-1,-1];
+        playingField.row = -1;
+        playingField.column = -1;
+        playingField.count= 0;
     }
 
     update(i,j,k,l,value) {
         var ret = 0;
         // moves allowed just in playing field
-        if(playingField[0] != -1 && (i != playingField[0] || j != playingField[1]))
+        if(playingField.row != -1 && (i != playingField.row || j != playingField.column))
             return ret;
+        // update field's fullness
+        this.fullState[i][j]++;
         // save move, change playing field
         this.state[i][j][k][l] = value;
-        playingField[0] = k;
-        playingField[1] = l;
-        // check
+        // decide next playing field
+        if(this.fullState[k][l] < 9) {
+            playingField.row = k;
+            playingField.column = l;
+        } else if(this.fullState[i][j] < 9) { // choose current field as playing field
+            playingField.row = i;
+            playingField.column = j;
+        } else { // choose first free field
+            for(var m = 0; m < 3; m++)
+                for(var n = 0; n < 3; n++)
+                    if(this.fullState[m][n] < 9) {
+                        playingField.row = m;
+                        playingField.column = n;
+                        break;
+                    }
+        }
         ret++;
         // if field win
         if(this.smallWin(i,j))
@@ -61,10 +79,19 @@ class Game {
         var available = [];
         for(var i = 0; i < 3; i++)
             for(var j = 0; j < 3; j++)
-                if(this.state[playingField[0]][playingField[1]][i][j] == 0)
+                if(this.state[playingField.row][playingField.column][i][j] == 0)
                     available.push(3*i+j);
         var r = Math.floor(Math.random() * available.length);
         processMove(Math.floor(available[r]/3),available[r]%3);
+    }
+
+    checkFull(row,column) {
+        for(var i = 0; i < 3; i++)
+            for(var j = 0; j < 3; j++)
+                if(this.state[playingField.row][playingField.column][i][j] == 0)
+                    return false;
+        this.fullState[playingField.row][playingField.column] = true;
+        return true;
     }
 
     smallWin(row,column) {
@@ -136,8 +163,7 @@ function processMove(row,column)
     var square;
     // if computer moved
     if(row > -1) {
-        var id = "#c" + playingField[0] + playingField[1] + row + column;
-        console.log(id);
+        var id = "#c" + playingField.row + playingField.column + row + column;
         square = $(id);
     } else // see which field square (td) was clicked
         square = $(this);
@@ -145,9 +171,10 @@ function processMove(row,column)
     // do nothing if field is already colored (played)
     if(square.css("background-color") != "rgb(255, 255, 255)")
         return;
+
     // save playing field id and old field color
-    var old_cid = "#c" + playingField[0] + playingField[1];
-    var old_clr = TTN.fieldColor(playingField[0],playingField[1]);
+    var old_cid = "#c" + playingField.row + playingField.column;
+    var old_clr = TTN.fieldColor(playingField.row, playingField.column);
     // find square index from which take indices to update game state
     var id = square.attr("id");
 
@@ -161,7 +188,7 @@ function processMove(row,column)
         // change field's color
         square.css("background-color", (currentPlayer == -1) ? player1Color : player2Color);
         // set new playing field
-        var cid = "#c" + playingField[0] + playingField[1];
+        var cid = "#c" + playingField.row + playingField.column;
         $(cid).css("background-color", "#00ff00");
         // set next player
         currentPlayer *= -1;
