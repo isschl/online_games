@@ -127,7 +127,7 @@ class Game {
     fieldColor(row,column) {
         if(row == -1)
             return "#000000";
-        return (this.bigState[row][column] == -1) ? "#ff0000" : (this.bigState[row][column] == 1) ? "#0000ff" : "#000000";
+        return (this.bigState[row][column] == -1) ? player1Color : (this.bigState[row][column] == 1) ? player2Color : "#000000";
     }
 }
 
@@ -174,7 +174,10 @@ function processMove(row,column)
         // change everything to winner color
         $("#gameTable").css("background-color", (currentPlayer == -1) ? player2Color : player1Color);
         container.empty();
+        // append win text
         container.append("<div id='gameOver'>Game Over! " + ((currentPlayer == -1) ? player2 : player1) + " has won.</div>");
+        // append back to menu button
+        container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
         // add score to database
         $.ajax(
             {
