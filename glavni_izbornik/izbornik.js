@@ -268,5 +268,23 @@ $(document).ready(function(){
 		ctx.stroke();
 
 	}
+	
+	$("#vjesala").on("click",function()
+	{
+		window.open("../hangman","_self");
+	});
+	$("#krizic").on("click",function()
+	{
+		window.open("../Tic-Tac-NO/game.html","_self");
+	});
+	$("#staza").on("click",function()
+	{
+		alert("Nisam ubacio link - tek kad autor javi da je gotova");
+		//window.open("../staza","_self");
+	});
+	$("#upitnik").on("click",function()
+	{
+		window.open("../upitnik","_self");
+	});
 
 });	
