@@ -308,4 +308,48 @@ $(document).ready(function(){
 	$(".igra").on("mouseleave",function(){
 		$("#informacije").hide();
 	});
+
+
+	$("#traka").css("height",Math.floor( $(window).height()/2 )+"px");
+	$("#traka").css("cursor","pointer");
+
+	var promjenaSlike = setInterval(mijenjajSliku, 2000);
+	var redniBrojSlike = -1;
+	var opis = ["naslovna slika","slika za Tic-Tac-NO","slika za Vješala","slika za Stazu","slika za Upitnik"];
+	mijenjajSliku();
+
+	function mijenjajSliku()
+	{
+		redniBrojSlike = (redniBrojSlike+1)%5;
+		$("#traka").html('<img src="../utils/data/igra' + redniBrojSlike
+		+ '.png" alt="' + opis[redniBrojSlike] + '" '
+		+ 'style=" max-width:100%; max-height:100%; '
+		+ 'display: block; margin-left: auto; margin-right: auto;'
+		+ '" />' );
+	}
+
+	$(window).on("resize",function()
+	{
+		$("#traka").css("height",Math.floor( $(window).height()/2 )+"px");
+	});
+
+	$("#traka").on("click",function(){
+		switch(redniBrojSlike) {
+    			case 1:
+				window.open("../Tic-Tac-NO","_self");
+        			break;
+    			case 2:
+				window.open("../hangman","_self");
+        			break;
+			case 3:
+				//window.open("../staza","_self");
+        			break;
+			case 4:
+				window.open("../upitnik","_self");
+        			break;
+    			default:
+        			window.open("..","_self");
+		}
+	});
+	
 });	
