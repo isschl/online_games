@@ -275,7 +275,7 @@ $(document).ready(function(){
 	});
 	$("#krizic").on("click",function()
 	{
-		window.open("../Tic-Tac-NO/game.html","_self");
+		window.open("../Tic-Tac-NO","_self");
 	});
 	$("#staza").on("click",function()
 	{

@@ -39,7 +39,7 @@ class Game {
         currentPlayer = -1;
         playingField.row = -1;
         playingField.column = -1;
-        playingField.count= 0;
+		moveCount = 41;
     }
 
     update(i,j,k,l,value) {
@@ -255,13 +255,12 @@ function processMove(row,column)
             });
         return;
     }
-    if(currentPlayer == 1)
+    if(currentPlayer == 1) {
         if (gameType == "AI")
             TTN.computerMove();
-    else {// increment move count
         moveCount--;
-        $("#score").text("Moves left: " + moveCount);
-    }
+       	$("#score").text("Moves left: " + moveCount);
+	}
 }
 
 /*==============================================  SCREEN INITIALIZERS  ===============================================*/
@@ -283,7 +282,7 @@ function drawPlay()
     container.empty();
 
     // append player names
-    container.append("<p id='p1'>Player1:" + " " + player1 + "</p><p id='score'>Moves left: 41</p><p id='p2'>Player2:" + " " + player2 + "</p>")
+    container.append("<p id='p1'>" + " " + player1 + "</p><p id='score'>Moves left: 41</p><p id='p2'>" + " " + player2 + "</p>")
     $("#p1").css("color", player1Color);
     $("#p2").css("color", player2Color);
 
