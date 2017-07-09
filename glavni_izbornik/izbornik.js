@@ -294,8 +294,8 @@ $(document).ready(function(){
 		.css("width","200");
 
 	$(".igra").on("mouseenter",function(){
-		var x = $(this).position().left+100;
-		var y = $(this).position().top+100;
+		var x = $(this).position().left;
+		var y = $(this).position().top+200;
 
 		$("#informacije").html($( "."+$(this).attr("id") ).html());
 		
