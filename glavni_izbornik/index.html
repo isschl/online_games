@@ -14,31 +14,46 @@
 	<h2> Odaberite igru: </h2>
 
 	<div id="traka"></div>
+	<div id="informacije"></div>
 	
-	<canvas height = "200" width = "200" id = "vjesala" style = "border:1px solid black; cursor:pointer">
+	<canvas class="igra" height = "200" width = "200" id = "vjesala" style = "border:1px solid black; cursor:pointer">
 		<a href="../hangman" class="link" style="background-color:blue"> 
 		Igraj Vješala 
 		</a>
 	</canvas>
 
-	<canvas height = "200" width = "200" id = "krizic" style = "border:1px solid black; cursor:pointer""> 
+	<canvas class="igra" height = "200" width = "200" id = "krizic" style = "border:1px solid black; cursor:pointer"> 
 		<a href="../Tic-Tac-NO" class="link" style="background-color:red"> 
 		Igraj Tic-Tac-NO 
 		</a> 
 	</canvas>
 
-	<canvas height = "200" width = "200" id = "staza" style = "border:1px solid black; cursor:pointer""> 
+	<canvas class="igra" height = "200" width = "200" id = "staza" style = "border:1px solid black; cursor:pointer"> 
 		<a href="../staza" class="link" style="background-color:green"> 
 		Igraj Stazu 
 		</a>
 	</canvas>
 
-	<canvas height = "200" width = "200" id = "upitnik" style = "border:1px solid black; cursor:pointer""> 
+	<canvas class="igra" height = "200" width = "200" id = "upitnik" style = "border:1px solid black; cursor:pointer"> 
 		<a href="../upitnik" class="link" style="background-color:black"> 
 		Igraj Upitnik 
 		</a>
 	</canvas>
 	
+	<div hidden class="vjesala"> <p><b style="color:blue; font-size:150%"> Vješala </b></p>
+	<p>Zamislili smo neku riječ. Slovo po slovo - pogodi riječ ili budi obješen! </p></div>
+
+	<div hidden class="krizic"> <p><b style="color:red; font-size:150%"> Tic-Tac-NO </b></p>
+	<p>Iskombinirajte pobjede u malim 3*3 poljima kako biste pobijedili 
+	u velikom, ali oprez! - svakim svojim potezom određujete u kojem polju 
+	protivnik mora igrati. </p></div>
+
+	<div hidden class="staza"> <p><b style="color:purple; font-size:150%"> Staza </b></p>
+	<p>Igra za 2 igrača. Cilj je što prije prijeći stazu krećući se ravnim linijama. </p></div>
+
+	<div hidden class="upitnik"> <p><b style="color:green; font-size:150%"> Upitnik </b>
+	<p>Možeš li točno odgovoriti na svih 15 pitanja? Pazi - neće biti lako! </p></div>
+
 	<a href="../Tic-Tac-NO" class="link" style="background-color:red"> Tic-Tac-NO </a>
 	<a href="../hangman" class="link" style="background-color:blue"> The Hangman </a>
 	<a href="../upitnik" class="link" style="background-color:green"> Upitnik </a>
