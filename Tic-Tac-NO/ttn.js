@@ -6,9 +6,9 @@
 var container;
 var gameType = "AI";
 var backgroundColor = "grey";
-var player1 = "You"; // default player1 name
+var player1 = "Ti"; // default player1 name
 var player1Color =  "red";
-var player2 = "computer"; // default player2 name
+var player2 = "AI"; // default player2 name
 var player2Color = "blue";
 var playerColors = "pc1";
 var currentPlayer = -1;
@@ -227,39 +227,27 @@ function processMove(row,column)
         currentPlayer *= -1;
     }
     if(ret > 1) {
-        // change color of won field
-        $(old_cid).css("background-color", (currentPlayer == -1) ? player2Color : player1Color);
+        // change color of won field if not won before
+		if(old_clr != player1Color && old_clr != player2Color)
+        	$(old_cid).css("background-color", (currentPlayer == -1) ? player2Color : player1Color);
     }
     if(ret > 2) {
         // change everything to winner color
-        $("#gameTable").css("background-color", (currentPlayer == -1) ? player2Color : player1Color);
-        // append win text
-        container.append("<div id='gameOver'>Game Over! " + ((currentPlayer == -1) ? player2 : player1) + " has won.</div>");
-        // append back to menu button
-        container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
-        // add score to database
-        $.ajax(
-            {
-                url : "../utils/spremiRezultat.php ",
-                data : { title : "Tic-Tac-NO", score : moveCount },
-                success: function(data)
-                {
-                    console.log(data);
-                },
-                error: function(xhr, status)
-                {
-                    if(status!==null)
-                        console.log("Error prilikom Ajax poziva: "+status);
-                },
-                async: false
-            });
+        //$("#gameTable").css("background-color", (currentPlayer == -1) ? player2Color : player1Color);
+        // draw win screen
+		drawGameOver();
         return;
     }
     if(currentPlayer == 1) {
+		$("#p2").css("visibility", "visible");
+		$("#p1").css("visibility", "hidden");
         if (gameType == "AI")
             TTN.computerMove();
         moveCount--;
-       	$("#score").text("Moves left: " + moveCount);
+       	$("#score").text("Preostalo poteza: " + moveCount);
+	} else {
+		$("#p1").css("visibility", "visible");
+		$("#p2").css("visibility", "hidden");
 	}
 }
 
@@ -268,12 +256,14 @@ function drawMenu()
 {
     // clear container's current content
     container.empty();
+	// container color
+	container.css("background-color", backgroundColor);
 
     // append 4 menu buttons
-    container.append("<div id='play' class='menuButtons' onclick='drawPlay()'>" + "PLAY</div>");
-    container.append("<div id='highscores' class='menuButtons' onclick='drawHighscores()'>" + "HIGHSCORES</div>");
-    container.append("<div id='settings' class='menuButtons' onclick='drawSettings()'>" + "SETTINGS</div>");
-    container.append("<div id='help' class='menuButtons' onclick='drawHelp()'>" + "HELP</div>");
+    container.append("<div id='play' class='menuButtons' onclick='drawPlay()'>" + "IGRAJ</div>");
+    container.append("<div id='highscores' class='menuButtons' onclick='drawHighscores()'>" + "TOP 5</div>");
+    container.append("<div id='settings' class='menuButtons' onclick='drawSettings()'>" + "POSTAVKE</div>");
+    container.append("<div id='help' class='menuButtons' onclick='drawHelp()'>" + "POMOĆ</div>");
 }
 
 function drawPlay()
@@ -282,9 +272,10 @@ function drawPlay()
     container.empty();
 
     // append player names
-    container.append("<p id='p1'>" + " " + player1 + "</p><p id='score'>Moves left: 41</p><p id='p2'>" + " " + player2 + "</p>")
+    container.append("<div id='p1'>" + " " + player1 + "</div><div id='score'>Preostalo poteza: 41</div><div id='p2'>" + " " + player2 + "</div>");
     $("#p1").css("color", player1Color);
     $("#p2").css("color", player2Color);
+	$("#p2").css("visibility", "hidden");
 
     var str = "";
     str += "<table id='gameTable'>";
@@ -308,10 +299,45 @@ function drawPlay()
     container.append(str);
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
 
     $(".clickable").on("click", processMove);
     TTN = new Game();
+}
+
+function drawGameOver() 
+{
+	// clear container's current content
+    container.empty();
+	
+	container.css("background-color", ((currentPlayer == -1) ? player2Color : player1Color));
+	// append win text
+	container.append("<div id='gameOver'><span class='subtitle'>KRAJ IGRE!</span><br>" + ((currentPlayer == -1) ? player2 : player1) + " je pobijednio s" + (41-moveCount+1) + " poteza.</div>");
+
+	// append save score button
+	container.append("<div id='saveScore' class='menuButtons'>Spremi rezultat</div>");
+	// add score to database
+	$("#saveScore").on("click", function(){
+		console.log("save");
+		$.ajax({
+    	url : "../utils/spremiRezultat.php ",
+      	data : { title : "Tic-Tac-NO", score : moveCount },
+        success: function(data)
+        {
+   	    	console.log(data);
+			// $("#saveScore").html(data);
+        },
+        error: function(xhr, status)
+        {
+        	if(status!==null)
+            	console.log("Error prilikom Ajax poziva: "+status);
+        },
+        async: false
+		});
+	});
+
+	// append back to menu button
+    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
 }
 
 function drawHighscores()
@@ -322,9 +348,9 @@ function drawHighscores()
     var str = "";
     str += "<table id='hTable'>";
     str += "<tr class='hRow'>";
-    str += "<td class='hRank'>rank</td>";
-    str += "<td class='hName'>name</td>";
-    str += "<td class='hScore'>score</td>";
+    str += "<td class='hRank'>#</td>";
+    str += "<td class='hName'>IME</td>";
+    str += "<td class='hScore'>BODOVI</td>";
     str += "</tr>";
     for(var i = 0; i < 5; i++) {
         str += "<tr class='hRow'>";
@@ -374,7 +400,7 @@ function drawHighscores()
     }
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
 }
 
 function drawSettings()
@@ -384,18 +410,18 @@ function drawSettings()
 
     container.append("<div id='settDiv'><form id='settingsForm'></form></div>");
 
-    var str = "<span class='subtitle'>Choose background color:</span><br>";
-    str += "<input type='radio' name='bcolorSettings' value='white'> White<br>";
-    str += "<input type='radio' name='bcolorSettings' value='grey'> Grey<br>";
-    str += "<input type='radio' name='bcolorSettings' value='brown'> Brown";
+    var str = "<span class='subtitle'>Izaberi pozadinsku boju:</span><br>";
+    str += "<input type='radio' name='bcolorSettings' value='white'> Bijela<br>";
+    str += "<input type='radio' name='bcolorSettings' value='grey'> Siva<br>";
+    str += "<input type='radio' name='bcolorSettings' value='brown'> Smeđa";
 
-    str += "<br><br><span class='subtitle'>Choose player colors:</span><br>";
-    str += "<input type='radio' name='pcolorSettings' value='pc1'> Red & Blue<br>";
-    str += "<input type='radio' name='pcolorSettings' value='pc2'> Purple & Yellow<br>";
+    str += "<br><br><span class='subtitle'>Izaberi boje igrača:</span><br>";
+    str += "<input type='radio' name='pcolorSettings' value='pc1'> Crveni i Plavi<br>";
+    str += "<input type='radio' name='pcolorSettings' value='pc2'> Ljubičasti i Žuti<br>";
 
-    str += "<br><br><span class='subtitle'>Choose game type</span><br>";
-    str += "<input type='radio' name='gtypeSettings' value='AI'> You vs. AI<br>";
-    str += "<input type='radio' name='gtypeSettings' value='2off'> You vs. Friend<br>";
+    str += "<br><br><span class='subtitle'>Odaberi tip igre</span><br>";
+    str += "<input type='radio' name='gtypeSettings' value='AI'> Ti vs. AI<br>";
+    str += "<input type='radio' name='gtypeSettings' value='2off'> Ti vs. Prijatelj<br>";
 
     str += "</form>";
 
@@ -410,8 +436,10 @@ function drawSettings()
     settingsForm.on("click", function() {
         // get value of object that was clicked
         if($(this).attr("name") == "bcolorSettings") {
+			var clr = $(this).attr("value");
             // set container color
-            container.css("background-color", $(this).attr("value"));
+            container.css("background-color", clr);
+			backgroundColor = clr;
         } else if($(this).attr("name") == "pcolorSettings"){
             // set player colors
             playerColors = $(this).attr("value");
@@ -426,14 +454,14 @@ function drawSettings()
             // set game type
             gameType = $(this).attr("value");
             if(gameType == "AI")
-                player2 = "computer";
+                player2 = "AI";
             else
-                player2 = "Friend";
+                player2 = "Prijatelj";
         }
     });
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
 }
 
 function drawHelp()
@@ -443,15 +471,15 @@ function drawHelp()
 
     container.append("<div id='helpText'></div>");
     var str = "";
-    str += "Combine small Tic-Tac-Toe wins to win a large Tic-Tac-Toe(NO).<br>";
-    str += "Allowed small Tic-Tac-Toe playing field is determined by opponent's last move.<br><br>";
-    str += "<span class='subtitle'>Example:</span><br>Player1 plays in bottom middle square of playing field (no matter which).<br>";
-    str += "Now the playing field for Player2 becomes the bottom middle Tic-Tac-Toe field.<br>";
-    str += "Playing field is marked with green edges.<br>";
+    str += "Iskombiniraj male pobjede da bi odnio veliku.<br>";
+    str += "3x3 polje za igru određeno je protivnikovim zadnjim potezom ili slučajno ako je potrebno.<br><br>";
+    str += "<span class='subtitle'>Primjer:</span><br>Igrač1 odigra u donje desno polje trenutnog igračeg polja.<br>";
+    str += "Trenutno igrače polje (za sljedećeg igrača) postaje donje desno 3x3 polje.<br>";
+    str += "Igrače polje označeno je zelenim rubovima, a prvi potez igre je proizvoljan.<br>";
     $("#helpText").append(str);
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
 }
 
 /*================================================  GAME INITIALIZER  ================================================*/

@@ -35,25 +35,29 @@ table { margin: 0 auto; }
     cursor: pointer;
 }
 
-#p1 {
-    width: 33%;
-    display: inline-block;
-    text-align: left;
+#p1, #p2, #score {
+    width: 20%;
+    height: 60px;
+	display: inline-block;
+    left: 0;
+    top: 0;
+    text-align: center;
+    font-size: 40px;
+    line-height: 60px;
 }
 #score {
-    width: 33%;
-    display: inline-block;
-    color: #000000;
-    text-align: center;
+    width: 60%;
+	left: auto;
+	right: auto;
+	font-size: 30px;
+	line-height: 60px;
 }
 #p2 {
-    width: 33%;
-    display: inline-block;
-    text-align: right;
+    right: 0;
 }
 
 .menuButtons {
-    width: 200px;
+    width: 240px;
     height: 60px;
     margin: 0 auto;
     border-radius: 25px;
@@ -65,14 +69,12 @@ table { margin: 0 auto; }
 }
 #play {
     background-color: #00ff00;
-    margin-top: 130px;
+    margin-top: 110px;
 }
 #settings {
-    font-size: 35px;
     background-color: #123456;
 }
 #highscores {
-    font-size: 30px;
     background-color: #a0000f;
 }
 #help { background-color: #ff00ff; }
@@ -92,13 +94,20 @@ table { margin: 0 auto; }
     cursor: pointer;
 }
 
+#saveScore {
+	width: 200px;
+    height: 40px;
+	font-size: 20px;
+	line-height: 40px;
+	background-color: #00ff00;
+	margin-top: 100px;
+}
+
 #gameOver {
-    width: 400px;
+    width: 60%;
     height: 60px;
     margin: 0 auto;
-    margin-top: 200px;
-    background-color: pink;
-    border: 2px solid #000000;
+    margin-top: 150px;
     text-align: center;
     font-size: 40px;
     line-height: 60px;
@@ -115,7 +124,7 @@ table { margin: 0 auto; }
 }
 
 .subtitle {
-    color: #f00f0f;
+    color: black;
     text-decoration: underline;
     font-weight: bold;
 }
