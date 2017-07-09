@@ -286,5 +286,26 @@ $(document).ready(function(){
 	{
 		window.open("../upitnik","_self");
 	});
+	
+	$("#informacije")
+		.hide()
+		.css("background-color","rgb(249, 249, 249)")
+		.css("position","absolute")
+		.css("width","200");
 
+	$(".igra").on("mouseenter",function(){
+		var x = $(this).position().left+100;
+		var y = $(this).position().top+100;
+
+		$("#informacije").html($( "."+$(this).attr("id") ).html());
+		
+		$("#informacije").show();
+		$("#informacije")
+		.css("left",x)
+		.css("top",y);
+	});
+
+	$(".igra").on("mouseleave",function(){
+		$("#informacije").hide();
+	});
 });	
