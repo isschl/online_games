@@ -223,5 +223,66 @@ $(document).ready(function()
 	}
 
 	$( window ).resize(namjesti);
+
+
+	$("body").on("click","#mojprofil",pokaziProfil);
+
+
+	function pokaziProfil()
+	{
+		$("#profil").remove();
+		$( "body" ).prepend( '<div id="profil" class="profil"></div>' );
+		
+		$( "#profil" )
+		.css( "position" , "fixed" )
+		.css( "z-index" , "2" )
+  		.css( "width", "60%")
+		.css( "height", "50%")
+		.css( "padding", "2em")
+		.css( "transform", "translate(-50%, -50%)")
+    
+		.css( "background-color" , "#555555" )
+		.css( "left", "50%" )
+		.css( "top", "50%" )
+		.prepend('<button id="closeProfil" class = "profil" >X</button>');
+
+		$( "#closeProfil" ) 
+		.css("float","right")
+		.css("background-color", "#f44336" )
+		.mouseover(function() { $(this).css("background-color","blue"); })
+		.mouseout(function() { $(this).css("background-color","red"); })
+		.css( "border-width", "0px" )
+		.css( "position" , "relative" )
+		.css( "margin-left", "100%" )
+		.css( "z-index" , "3" )
+		.css( "width", "50px" )
+		.css( "height",  "40px" );
+
+		$.ajax(
+		{
+			url : "../utils/dajProfil.php",
+			data : { kontakt : "ma moze" },
+			type: "POST",
+			success: function(data)
+			{
+			$("#profil").append('<div style="color:white; position:fixed; '
+				+'padding:0; left:50%; top:50%; transform:'
+				+'translate(-50%, -50%);" id="dodano">'
+				+data+'</div>');
+			},
+			error: function(xhr, status)
+			{
+			if(status!==null)
+				console.log("Error prilikom Ajax poziva: "+status);
+			},
+			async: false
+		});
+	}
+
+
+	$( "body" ).on( "click", "div.profil #closeProfil", function()
+	{
+		$("#profil").css("display","none");
+	});
 	
 } );
