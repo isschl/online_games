@@ -58,10 +58,10 @@ $(document).ready(function(){
 		
 		if(stoperica !== null) clearInterval(stoperica);	
 
-		$("body")
+		$("#content")
 		.html('<canvas height="'+Math.floor(0.95*$(window).height())
 		+'" width="'+Math.floor(0.95*$(window).width())
-		+'" id="cnv"> Canvas nije podrûan.'
+		+'" id="cnv"> Canvas nije podr≈æan.'
 		+'<a href="glavni_izbornik"> Ulazak na stranicu </a>'
 		+'</canvas>');
 
