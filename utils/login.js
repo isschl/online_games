@@ -60,6 +60,8 @@ $(document).ready(function()
 		},
 		async: false
 		} );
+		
+		$("#profil").css("display","none");
 	});
 
 	var divElement = $("#pocetni");
