@@ -5,18 +5,27 @@
 
 #gameContainer {
     width: 90%;
-    height: 500px;
+    height: 510px;
     margin: 0 auto;
     background-color: gray;
     border: 2px solid black;
     position: relative;
 }
-#c00, #c01, #c02, #c10, #c11, #c12, #c20, #c21, #c22 {
+.outer {
     width: 120px;
     height: 120px;
     background-color: #000000;
+	border: 1px solid black;
+}
+.clickable {
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff;
+	border: 1px solid black;
+    cursor: pointer;
 }
 table { margin: 0 auto; }
+
 #hTable { margin-top: 100px; }
 
 .hRank, .hName, .hScore {
@@ -27,13 +36,6 @@ table { margin: 0 auto; }
 }
 .hName { width: 200px; }
 .hScore { width: 100px; }
-
-.clickable {
-    width: 40px;
-    height: 40px;
-    background-color: #ffffff;
-    cursor: pointer;
-}
 
 #p1, #p2, #score {
     width: 20%;

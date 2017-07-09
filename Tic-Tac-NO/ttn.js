@@ -68,8 +68,8 @@ class Game {
                     }
         }
         ret++;
-        // if field win
-        if(this.smallWin(i,j))
+        // if (first) field win
+        if(this.bigState[i][j] == 0 && this.smallWin(i,j))
             ret++;
         if(this.bigWin())
             ret++;
@@ -218,11 +218,8 @@ function processMove(row,column)
     if(ret > 0) {
         // reset previous playing field color
         $(old_cid).css("background-color", old_clr);
-        // change field's color
+        // change square's color
         square.css("background-color", (currentPlayer == -1) ? player1Color : player2Color);
-        // set new playing field
-        var cid = "#c" + playingField.row + playingField.column;
-        $(cid).css("background-color", "#00ff00");
         // set next player
         currentPlayer *= -1;
     }
@@ -238,6 +235,11 @@ function processMove(row,column)
 		drawGameOver();
         return;
     }
+	// set new playing field
+    var cid = "#c" + playingField.row + playingField.column;
+    $(cid).css("background-color", "#00ff00");
+
+	// deal with game moves
     if(currentPlayer == 1) {
 		$("#p2").css("visibility", "visible");
 		$("#p1").css("visibility", "hidden");
@@ -282,7 +284,7 @@ function drawPlay()
     for(var i=0; i<3; i++) {
         str += "<tr>";
         for (var j = 0; j < 3; j++) {
-            str += "<td id='c" + i + j + "'><table>";
+            str += "<td id='c" + i + j + "' class='outer'><table>";
             for (var k = 0; k < 3; k++) {
                 str += "<tr>";
                 for (var l = 0; l < 3; l++)
@@ -312,28 +314,30 @@ function drawGameOver()
 	
 	container.css("background-color", ((currentPlayer == -1) ? player2Color : player1Color));
 	// append win text
-	container.append("<div id='gameOver'><span class='subtitle'>KRAJ IGRE!</span><br>" + ((currentPlayer == -1) ? player2 : player1) + " je pobijednio s" + (41-moveCount+1) + " poteza.</div>");
+	container.append("<div id='gameOver'><span class='subtitle'>KRAJ IGRE!</span><br>" + ((currentPlayer == -1) ? player2 : player1) + " je pobijednio u " + (41-moveCount+1) + " poteza.</div>");
 
 	// append save score button
 	container.append("<div id='saveScore' class='menuButtons'>Spremi rezultat</div>");
 	// add score to database
 	$("#saveScore").on("click", function(){
-		console.log("save");
-		$.ajax({
-    	url : "../utils/spremiRezultat.php ",
-      	data : { title : "Tic-Tac-NO", score : moveCount },
-        success: function(data)
-        {
-   	    	console.log(data);
-			// $("#saveScore").html(data);
-        },
-        error: function(xhr, status)
-        {
-        	if(status!==null)
-            	console.log("Error prilikom Ajax poziva: "+status);
-        },
-        async: false
-		});
+		if(gameType == "2off") {
+			$("#saveScore").append("<br>Ne sprema se rezultat za igre s prijateljima")
+		} else {
+			$.ajax({
+    			url : "../utils/spremiRezultat.php",
+      			data : { title : "Tic-Tac-NO", score : moveCount },
+        		success: function(data)
+        		{
+					$("#saveScore").append("<br>" + data);
+        		},
+        		error: function(xhr, status)
+        		{
+        			if(status!==null)
+            			console.log("Error prilikom Ajax poziva: "+status);
+        		},
+        		async: false
+				});
+		}
 	});
 
 	// append back to menu button
@@ -365,7 +369,7 @@ function drawHighscores()
     // ajax get highscores...
     $.ajax(
         {
-            url : " ../utils/dohvatiListu.php ",
+            url : "../utils/dohvatiListu.php",
             data : { title : "Tic-Tac-NO" },
             type: "POST",
             success: function(data)
