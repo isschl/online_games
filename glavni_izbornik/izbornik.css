@@ -10,3 +10,9 @@ a.link {
     cursor: pointer;
     width: 80%;
 }
+
+#traka{
+    display:block;
+    width:100%;
+    background-color: black;
+}
