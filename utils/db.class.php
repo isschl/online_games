@@ -1,6 +1,7 @@
 <?php
 
-//na mjestu gdje stoji horvat upisite svoje prezime
+//za spajanje na bazu
+//na mjestu gdje stoji IME upisite svoje prezime
 
 class DB
 {
