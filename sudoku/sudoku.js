@@ -27,6 +27,8 @@ class Game {
         this.state = gameState;
     }
 
+	get numbers() { return this.state; }  
+
     update(i,j,k,l,value) {
 		this.state[i][j][k][l] = value;
     }
@@ -63,12 +65,16 @@ function drawMenu()
 function fillTable(str) 
 {
 	var squares = $(".clickable");
-	for(var i = 0; i < 81; i++) {
-		if(str.charAt(i) == '0')
-			;
-		else
-			squares.eq(i).text(str.charAt(i));
-	}
+	var nums = Sudoku.numbers;
+	var c = 0;
+	for(var i = 0; i < 3; i++)
+    	for(var j = 0; j < 3; j++)
+  	      for (var k = 0; k < 3; k++)
+     	     for (var l = 0; l < 3; l++) {
+				if(nums[i][j][k][l] != 0)
+			 		squares.eq(c).text(nums[i][j][k][l]);
+				c++;
+				}
 }
 
 function showChoices()
@@ -100,14 +106,17 @@ function drawPlay()
 	container.append("<button id='hard' class='difficultyButtons' value='l'>TEŠKO</button>  ");
 	container.append("<button id='gotov' onclick='drawGameOver()'>GOTOV</button>");
 	$(".difficultyButtons").on("click", function(){
+		testString = "000689100800000029150000008403000050200005000090240801084700910500000060060410000";
+		Sudoku.constructFromString(testString);
+		fillTable(testString);
 		$.ajax({
     			url : "sudoku.php",
       			data : { numbers: "give", difficulty: $(this).attr("value") },
 				type: "POST",
         		success: function(data)
         		{
-					console.log(data);
-					testString = "123456789000006789123456789120006789123456789123450000023456789123450089123400789";
+					console.log("--> " + data);
+					testString = "000689100800000029150000008403000050200005000090240801084700910500000060060410000";
 					Sudoku.constructFromString(testString);
 					fillTable(testString);
         		},

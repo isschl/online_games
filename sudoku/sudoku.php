@@ -5,6 +5,17 @@
 	if(isset($_POST['numbers']) && isset($difficulty))
 	{
 		echo $difficulty;
-		// echo sudoku numbers string from database
+		// nabaviti puno sudoku stringova...
+		// TODO: echo random sudoku numbers string from database WHERE tezina == $difficulty
+		$db = DB::getConnection();
+		try
+		{
+			$st = $db->prepare( "SELECT brojevi FROM sudoku");
+			$st->execute();
+		}
+		catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+		
+		$row=$st->fetch();
+		echo $row;
 	}
 ?>

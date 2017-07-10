@@ -310,7 +310,7 @@ function drawPlay()
     container.append(str);
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
 
     $(".clickable").on("click", processMove);
     TTN = new Game();
@@ -351,7 +351,7 @@ function drawGameOver()
 	});
 
 	// append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
 }
 
 function drawHighscores()
@@ -418,7 +418,7 @@ function drawHighscores()
     }
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
 }
 
 function drawSettings()
@@ -481,7 +481,7 @@ function drawSettings()
     });
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
 }
 
 function drawHelp()
@@ -503,7 +503,7 @@ function drawHelp()
     $("#helpText").append(str);
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
 }
 
 /*================================================  GAME INITIALIZER  ================================================*/

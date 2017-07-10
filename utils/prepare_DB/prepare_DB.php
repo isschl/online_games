@@ -272,4 +272,48 @@ catch( PDOException $e ) { exit( "PDO error #10: " . $e->getMessage() ); }
 
 echo "Ubacio pitanja u tablicu pitanja.<br />";
 
+try
+{
+	$st = $db->prepare( 
+		'CREATE TABLE IF NOT EXISTS sudoku (' .
+		'id int NOT NULL PRIMARY KEY AUTO_INCREMENT,' .
+		'brojevi char(81) NOT NULL,' .
+		'tezina varchar(1) NOT NULL)'
+	);
+
+	$st->execute();
+}
+catch( PDOException $e ) { exit( "PDO error #1: " . $e->getMessage() ); }
+
+try
+{
+	$st = $db->prepare( 
+		'ALTER TABLE sudoku CHARACTER SET utf8 COLLATE utf8_unicode_ci;'
+	);
+
+	$st->execute();
+}
+catch( PDOException $e ) { exit( "PDO error #2: " . $e->getMessage() ); }
+
+
+echo "Napravio tablicu sudokua .<br />";
+
+//l - lako, s - srednje, t - teško
+
+try
+{
+	$st = $db->prepare( 'INSERT INTO sudoku(brojevi, tezina) VALUES (:brojevi, :tezina)' );
+
+	$st->execute( array( 
+		'brojevi' => '370000001000700005408061090000010000050090460086002030000000000694005203800149500', 
+		'tezina' => 't') );
+	$st->execute( array( 
+		'brojevi' => '000689100800000029150000008403000050200005000090240801084700910500000060060410000', 
+		'tezina' => 't') );
+
+}
+catch( PDOException $e ) { exit( "PDO error #3: " . $e->getMessage() ); }
+
+echo "Ubacio sudokue u tablicu sudokua.<br />";
+
 ?> 
