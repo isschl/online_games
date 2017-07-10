@@ -21,7 +21,8 @@ function ispisiLogoutFormu($user)
 {
 	echo '<label for="loginklasa2" style="color: green">Uspje&#353;no ste prijavljeni, '
 		.$user.'! </label>'
-		.'<input type="button" id="loginklasa2" value="Log Out" >';
+		.'<input type="button" id="loginklasa2" value="Log Out" >'
+		.'<input type="button" id="mojprofil" value="Moj profil" >';
 	
 }
 

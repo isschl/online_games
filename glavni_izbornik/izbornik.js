@@ -6,7 +6,7 @@ $(document).ready(function(){
 	var animKrizic = setInterval(crtajKrizic,500);
 	var animUpitnik = setInterval(crtajUpitnik, 1000);
 	var animStaza = setInterval(crtajStazu, 100);
-	
+	var animSudoku = setInterval(crtajSudoku,700);
 
 	var brojPolja = 0;
 	var naRedu = 1;
@@ -268,6 +268,63 @@ $(document).ready(function(){
 		ctx.stroke();
 
 	}
+
+	var brojSudokuPolja = 0;
+	var ispunjenaSudokuPolja = new Array();
+
+	function crtajSudoku()
+	{
+		//isprazni canvas
+		var ctx=$("#sudoku").get(0).getContext("2d");
+		var w = $("#sudoku").width();
+		var h = $("#sudoku").height();
+		ctx.clearRect(0,0,w,h);
+	
+		//treba li crtati iznova?
+		if(brojSudokuPolja === 9)
+		{
+			brojSudokuPolja = 0;
+			ispunjenaSudokuPolja = new Array();
+		}
+
+		//odaberi neobojano random polje od 0 do 8
+		var kojePolje = Math.floor(Math.random()*9);
+		while( ispunjenaSudokuPolja.indexOf(kojePolje) !== -1 )
+			kojePolje = Math.floor(Math.random()*9);
+		ispunjenaSudokuPolja.push(kojePolje);
+
+		//upiši u polja do sad ispunjena
+		for( var i = 0; i < ispunjenaSudokuPolja.length; ++i)
+		{
+			var redak = Math.floor(ispunjenaSudokuPolja[i]/3);
+			var stupac = ispunjenaSudokuPolja[i]%3;
+			ctx.fillStyle = "red";
+			ctx.font = Math.floor(Math.min(h/3,w/3))+"px Arial";
+			ctx.fillText(i+1,Math.floor(redak*h/3)+5,Math.floor((stupac+1)*w/3)-5);
+		}
+
+		//iscrtaj vodoravne i okomite crte
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		
+		ctx.moveTo(0,Math.floor(h/3));
+		ctx.lineTo(w,Math.floor(h/3));
+		ctx.moveTo(0,Math.floor(2*h/3));
+		ctx.lineTo(w,Math.floor(2*h/3));
+
+		ctx.moveTo(Math.floor(w/3),0);
+		ctx.lineTo(Math.floor(w/3),h);
+		ctx.moveTo(Math.floor(2*w/3),0);
+		ctx.lineTo(Math.floor(2*w/3),h);
+
+		ctx.stroke();
+
+		//promijeni stanje sustava
+		++brojSudokuPolja;	
+	}
+
+
+
 	
 	$("#vjesala").on("click",function()
 	{
@@ -279,12 +336,15 @@ $(document).ready(function(){
 	});
 	$("#staza").on("click",function()
 	{
-		alert("Nisam ubacio link - tek kad autor javi da je gotova");
-		//window.open("../staza","_self");
+		window.open("../staza","_self");
 	});
 	$("#upitnik").on("click",function()
 	{
 		window.open("../upitnik","_self");
+	});
+	$("#sudoku").on("click",function()
+	{
+		window.open("../sudoku","_self");
 	});
 	
 	$("#informacije")
@@ -320,7 +380,7 @@ $(document).ready(function(){
 
 	function mijenjajSliku()
 	{
-		redniBrojSlike = (redniBrojSlike+1)%5;
+		redniBrojSlike = (redniBrojSlike+1)%6;
 		$("#traka").html('<img src="../utils/data/igra' + redniBrojSlike
 		+ '.png" alt="' + opis[redniBrojSlike] + '" '
 		+ 'style=" max-width:100%; max-height:100%; '
@@ -342,10 +402,13 @@ $(document).ready(function(){
 				window.open("../hangman","_self");
         			break;
 			case 3:
-				//window.open("../staza","_self");
+				window.open("../staza","_self");
         			break;
 			case 4:
 				window.open("../upitnik","_self");
+        			break;
+			case 5:
+				window.open("../sudoku","_self");
         			break;
     			default:
         			window.open("..","_self");

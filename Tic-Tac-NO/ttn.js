@@ -260,6 +260,10 @@ function drawMenu()
     container.empty();
 	// container color
 	container.css("background-color", backgroundColor);
+	// add side overlays
+	container.append("<div id='sl' class='sideOverlay'></div>");
+	container.append("<div id='sr' class='sideOverlay'></div>");
+	$("#sr").css("left", "80%");
 
     // append 4 menu buttons
     container.append("<div id='play' class='menuButtons' onclick='drawPlay()'>" + "IGRAJ</div>");
@@ -272,6 +276,11 @@ function drawPlay()
 {
     // clear container's current content
     container.empty();
+	// add side overlays
+	container.append("<div id='sl' class='sideOverlay'></div>");
+	container.append("<div id='sr' class='sideOverlay'></div>");
+	$("#sr").css("left", "80%");
+	
 
     // append player names
     container.append("<div id='p1'>" + " " + player1 + "</div><div id='score'>Preostalo poteza: 41</div><div id='p2'>" + " " + player2 + "</div>");
@@ -301,7 +310,7 @@ function drawPlay()
     container.append(str);
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
 
     $(".clickable").on("click", processMove);
     TTN = new Game();
@@ -309,15 +318,16 @@ function drawPlay()
 
 function drawGameOver() 
 {
-	// clear container's current content
-    container.empty();
+	// add overlay
+	container.append("<div class='overlay'></div>");
 	
-	container.css("background-color", ((currentPlayer == -1) ? player2Color : player1Color));
 	// append win text
-	container.append("<div id='gameOver'><span class='subtitle'>KRAJ IGRE!</span><br>" + ((currentPlayer == -1) ? player2 : player1) + " je pobijednio u " + (41-moveCount+1) + " poteza.</div>");
+	container.append("<div id='gameOver'><span class='subtitle'>KRAJ IGRE!</span><br>" + ((currentPlayer == -1) ? player2 : player1) + " je pobijedio u " + (41-moveCount+1) + " poteza.</div>");
+	$("#gameOver").css("top", "100px");
 
 	// append save score button
 	container.append("<div id='saveScore' class='menuButtons'>Spremi rezultat</div>");
+	$("#saveScore").css("top", "240px");
 	// add score to database
 	$("#saveScore").on("click", function(){
 		if(gameType == "2off") {
@@ -341,24 +351,28 @@ function drawGameOver()
 	});
 
 	// append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
 }
 
 function drawHighscores()
 {
     // clear container's current content
     container.empty();
+	// add side overlays
+	container.append("<div id='sl' class='sideOverlay'></div>");
+	container.append("<div id='sr' class='sideOverlay'></div>");
+	$("#sr").css("left", "80%");
 
     var str = "";
     str += "<table id='hTable'>";
     str += "<tr class='hRow'>";
-    str += "<td class='hRank'>#</td>";
-    str += "<td class='hName'>IME</td>";
-    str += "<td class='hScore'>BODOVI</td>";
+    str += "<td class='hRank'><b>#</b></td>";
+    str += "<td class='hName'><b>IME</b></td>";
+    str += "<td class='hScore'><b>BODOVI</b></td>";
     str += "</tr>";
     for(var i = 0; i < 5; i++) {
         str += "<tr class='hRow'>";
-        str += "<td class='hRank'>" + (i+1) + ".</td>";
+        str += "<td class='hRank'><b>" + (i+1) + ".</b></td>";
         str += "<td class='hName'></td>";
         str += "<td class='hScore'></td>";
         str += "</tr>";
@@ -404,13 +418,17 @@ function drawHighscores()
     }
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
 }
 
 function drawSettings()
 {
     // clear container's current content
     container.empty();
+	// add side overlays
+	container.append("<div id='sl' class='sideOverlay'></div>");
+	container.append("<div id='sr' class='sideOverlay'></div>");
+	$("#sr").css("left", "80%");
 
     container.append("<div id='settDiv'><form id='settingsForm'></form></div>");
 
@@ -423,11 +441,9 @@ function drawSettings()
     str += "<input type='radio' name='pcolorSettings' value='pc1'> Crveni i Plavi<br>";
     str += "<input type='radio' name='pcolorSettings' value='pc2'> Ljubičasti i Žuti<br>";
 
-    str += "<br><br><span class='subtitle'>Odaberi tip igre</span><br>";
+    str += "<br><br><span class='subtitle'>Odaberi tip igre:</span><br>";
     str += "<input type='radio' name='gtypeSettings' value='AI'> Ti vs. AI<br>";
     str += "<input type='radio' name='gtypeSettings' value='2off'> Ti vs. Prijatelj<br>";
-
-    str += "</form>";
 
     $("#settingsForm").append(str);
 
@@ -465,13 +481,17 @@ function drawSettings()
     });
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
 }
 
 function drawHelp()
 {
     // clear container's current content
     container.empty();
+	// add side overlays
+	container.append("<div id='sl' class='sideOverlay'></div>");
+	container.append("<div id='sr' class='sideOverlay'></div>");
+	$("#sr").css("left", "80%");
 
     container.append("<div id='helpText'></div>");
     var str = "";
@@ -483,7 +503,7 @@ function drawHelp()
     $("#helpText").append(str);
 
     // append back to menu button
-    container.append("<div id='back' onclick='drawMenu()'>" + "natrag u meni</div>");
+    container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
 }
 
 /*================================================  GAME INITIALIZER  ================================================*/
