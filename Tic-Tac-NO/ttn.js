@@ -329,7 +329,7 @@ function drawGameOver()
 	// no save score option for losing or games with friends
 	if(winner != "Ti" || gameType == "2off") {
 		// append opis situacije
-		container.append("<p id='opis'>Napomena: porazi i igre s prijateljima se ne spremaju</p>");
+		container.append("<p id='opis'>(porazi i igre s prijateljima se ne spremaju)</p>");
 		// append back to menu button
     	container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
 		return;
