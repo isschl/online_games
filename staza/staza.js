@@ -14,6 +14,9 @@ var ctx;
 var pocetna_pozicija = [5,200];
 var trenutna_pozicija;
 
+var stanje_bez_crte;
+var zadnjih16pozicija = []; // možda i manje ako ih dosad nije bilo 16
+
 var upper_points = [[0,162], [115,64], [195,43], [206,31], [266,48], [296,88], [293,116], [320,189], [313,205], [284,212], [264,230], [351,291], [377,297],
 					[398,289], [406,187], [420,158], [464,137], [497,134], [512,123], [559,116], [580,119], [595,137], [601,206], [632,229], [648,223], [712,120],
 					[748,96], [768,70], [792,65], [822,80], [833,141], [863,193], [874,197], [889,228], [917,246], [945,247], [968,225], [1027,61], [1052,40],
@@ -59,7 +62,8 @@ function drawPlay()
 	Canvas.appendTo(container);
 	nacrtajStazu();
 	
-	trenutna_pozicija = pocetna_pozicija;
+	zadnjih16pozicija = [];
+	pomakni_na_poziciju(pocetna_pozicija);
 	ctx.beginPath();
     ctx.arc(trenutna_pozicija[0], trenutna_pozicija[1], 4, 0, 2 * Math.PI, false);
     ctx.fillStyle = 'black';
@@ -70,9 +74,34 @@ function drawPlay()
     {
 	  var x = e.offsetX;
 	  var y = e.offsetY;
-	  //console.log("x="+x+" y="+y+"  "+je_u_stazi(x,y));
-	  obradiKlik(x,y);
+	  var dx,dy;
+	  dx = x-trenutna_pozicija[0];
+	  dy = y-trenutna_pozicija[1];
+	  if (kvadrat(dx)+kvadrat(dy)<230) // u krugu radijusa 15
+	  {
+		  obradiKlik(x,y);
+	  }
     });
+	
+	//
+	Canvas.on('mousemove', function(e)
+	{
+	  var x = e.offsetX;
+	  var y = e.offsetY;
+	  var dx,dy;
+	  dx = x-trenutna_pozicija[0];
+	  dy = y-trenutna_pozicija[1];
+	  ctx.putImageData(stanje_bez_crte,0,0);
+	  if (kvadrat(dx)+kvadrat(dy)<230) // u krugu radijusa 15
+	  {
+		  var norma = Math.sqrt(kvadrat(dx)+kvadrat(dy));
+		  ctx.beginPath();
+		  ctx.moveTo(trenutna_pozicija[0],trenutna_pozicija[1]);
+		  ctx.lineTo(trenutna_pozicija[0]+15*dx/norma,trenutna_pozicija[1]+15*dy/norma);
+		  ctx.strokeStyle = '#0000FF';
+		  ctx.stroke();
+	  }
+	})
 
     // append back to menu button
     container.append("<div id='back' onclick='drawMenu()'>" + "Povratak</div>");
@@ -170,6 +199,7 @@ function nacrtajStazu()
 	ctx.moveTo(staza[0][0], staza[0][1]);
 	for (var i=1; i<staza.length; ++i)
 		ctx.lineTo(staza[i][0], staza[i][1]);
+	ctx.strokeStyle = "black";
 	ctx.stroke();
 	
 	ctx.fillStyle = "#FFFFFF";
@@ -181,6 +211,7 @@ function nacrtajStazu()
 	ctx.fill();
 }
 
+/*mičemo točku za jediničnu dužinu u odgovarajućem smjeru dok ona ne izađe iz staze*/
 function obradiKlik (x,y)
 {
 	if (x===trenutna_pozicija[0] && y===trenutna_pozicija[1])
@@ -218,11 +249,7 @@ function obradiKlik (x,y)
 	
 	if (tx!==trenutna_pozicija[0] || ty!==trenutna_pozicija[1])
 	{
-		ctx.beginPath();
-		ctx.moveTo(trenutna_pozicija[0],trenutna_pozicija[1]);
-		ctx.lineTo(jxcijeli,jycijeli);
-		ctx.stroke();
-		trenutna_pozicija = [jxcijeli,jycijeli];
+		pomakni_na_poziciju([jxcijeli,jycijeli]);
 		if (jxcijeli === 1200)
 			gameOver();
 	}
@@ -230,6 +257,8 @@ function obradiKlik (x,y)
 	//console.log(trenutna_pozicija);
 }
 
+/* staza je zapravo mnogokut, saznajemo je li točka u stazi na način da nađemo najbližu rubnu točku i po njoj sve odredimo (ovisno o tome
+ je li to točka na liniji ili unutar neke stranice) */
 function je_u_stazi (x,y)
 {
 	if (x<=0 || x>=1200)
@@ -329,6 +358,36 @@ function nadi_najblizi (x, y)
 		najmanja_udaljenost: min_udaljenost,
 		rub: min_rub
 	};
+}
+
+function pomakni_na_poziciju(nova_pozicija)
+{
+	trenutna_pozicija = nova_pozicija;
+	nacrtajStazu();
+	ctx.beginPath();
+    ctx.arc(trenutna_pozicija[0], trenutna_pozicija[1], 15, 0, 2 * Math.PI, false);
+    ctx.strokeStyle = '#0000FF';
+    ctx.stroke();
+	
+	zadnjih16pozicija.push(trenutna_pozicija);
+	if (zadnjih16pozicija.length > 16)
+		zadnjih16pozicija.shift();
+	var rg=0x00;
+	for (i=zadnjih16pozicija.length-2; i>=0; --i)
+	{
+		ctx.beginPath();
+		ctx.moveTo(zadnjih16pozicija[i+1][0],zadnjih16pozicija[i+1][1]);
+		ctx.lineTo(zadnjih16pozicija[i][0],zadnjih16pozicija[i][1]);
+		ctx.strokeStyle=getHexColor(rg,rg,0xFF);
+		ctx.stroke();
+		rg += 0x11;
+	}
+	
+	stanje_bez_crte = ctx.getImageData(0,0,1200,400);
+}
+
+function getHexColor(r,g,b){
+    return "#"+('000000'+((r*0x10000+g*0x100+b)>>>0).toString(16)).slice(-6);
 }
 
 function kvadrat(x)
