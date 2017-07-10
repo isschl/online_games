@@ -394,6 +394,9 @@ function drawHighscores()
             type: "POST",
             success: function(data)
             {
+				var hNames = $(".hName");
+				var hScores = $(".hScore");
+				// fill columns with data obtained
                 hNames.eq(1).text(data.prviIgrac);
                 hScores.eq(1).text(data.prviBodovi);
                 hNames.eq(2).text(data.drugiIgrac);
