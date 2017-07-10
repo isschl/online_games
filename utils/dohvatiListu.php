@@ -1,33 +1,58 @@
 <?php
-	require_once 'db.class.php';
 
-	function sendJSONandExit($message)
-	{
-		header('Content-type: application/json; charset=utf-8');
-		echo json_encode($message);
-		flush();
-		exit(0);
-	}
+/* radimo ljestvicu najboljih 5 igrača u danoj igri
+   ideja: ako je dan naziv igre, dohvati sve rezultate za tu igru
+   ali u padajućem poretku(DESC) - prvih 5 je najboljih 5!
+   Što ako ih nema 5 za danu igru - vidi komentar u kodu na tom mjestu. */
 
-	if(isset($_POST['title']))
-	{
+
+require_once 'db.class.php';
+
+
+function sendJSONandExit($message)
+{
+	header('Content-type: application/json; charset=utf-8');
+	echo json_encode($message);
+	flush();
+	exit(0);
+}
+
+
+if(isset($_POST['title']))
+{
+	//pročitaj iz posta za koju igru tražiš rezultate
 	$imeIgre = $_POST['title'];
+
 	$db = DB::getConnection();
+
 	try
 	{
-		$st = $db->prepare( "SELECT * FROM rezultati WHERE title LIKE :title ORDER BY score DESC");
+		$st = $db->prepare( "SELECT * FROM rezultati "
+			. "WHERE title LIKE :title ORDER BY score DESC");
 		$st->execute( array( 'title' => $imeIgre ) );
 	}
-	catch( PDOException $e ) { exit( 'Gre�ka u bazi: ' . $e->getMessage() ); }
+	catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
 	
+	//brojim do 5 - toliko igrača i rezultata trebam
 	$broj = 0;
-	$anonimni = array('AnonimnaLisica','AnonimnaGazela','AnonimniTarzan','AnonimniVuk','AnonimniPatak','AnonimnaPanda');
-	shuffle($anonimni);
-	$indeks = 0;	
-	$message = [];
 
+	/* ako nema toliko (5) igrača za tu igru, tada se vraćaju anonimne životinje
+	ideja došla od google docs-a, ime je Anonimna + slučajan string koji
+	predstavlja neku životinju, a broj bodova je naravno 0 */
+
+	$anonimni = array('AnonimnaLisica','AnonimnaGazela','AnonimniTarzan',
+			'AnonimniVuk','AnonimniPatak','AnonimnaPanda');
+
+	//ispremiješaj životinje, uzimam ih po redu (kolko treba)
+	shuffle($anonimni); 
+
+	//uzimam životinje od početka, kolko treba, dakle od indeksa 0
+	$indeks = 0;
+	
+	$message = [];
 	while($row = $st->fetch())
 	{
+		//dok ne dobiješ 5 igrača, idi redom po rezultatima
 		if( $broj === 0 )
 		{
 			$message['prviIgrac'] = $row['username'];
@@ -57,6 +82,7 @@
 		++$broj;
 	}
 
+	//ostatk nadopuni anonimnim životinjama
 	while($broj < 5)
 	{
 		if( $broj === 0 )
@@ -90,5 +116,7 @@
 	}
 
 	sendJSONandExit($message);
-	}
+
+}
+
 ?>

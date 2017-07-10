@@ -26,6 +26,8 @@
 }
 table { margin: 0 auto; }
 
+#gameTable { margin-top: 60px; }
+
 #hTable { margin-top: 100px; }
 
 .hRank, .hName, .hScore {
@@ -40,32 +42,32 @@ table { margin: 0 auto; }
 .hScore { width: 100px; }
 
 #p1, #p2, #score {
-    width: 20%;
-    height: 60px;
-	display: inline-block;
-    left: 0;
-    top: 0;
-    text-align: center;
-    font-size: 40px;
-    line-height: 60px;
-	z-index: -10;
+	position: absolute;
+	width: 15%;
+	left: 2.5%;
+    height: 40px;
+	top: 40%;
+	border: 1px solid black;
+	border-radius: 10px;
+	font-size: 30px;
+	line-height: 40px;
+	text-align: center;
+	background-color: #ffffff;
+	opacity: 0.75;
 }
 #score {
-    width: 60%;
-	left: auto;
-	right: auto;
-	font-size: 30px;
-	line-height: 60px;
+	width: 40%;
+	left: 30%;
+	top: 1%;
 }
-#p2 {
-    right: 0;
-}
+#p2 { left: 82.5%; }
 
 .menuButtons {
     width: 240px;
     height: 60px;
     margin: 0 auto;
-    border-radius: 25px;
+	margin-top: 5px;
+    border-radius: 20px;
     border: 2px solid #000000;
     text-align: center;
     font-size: 40px;
@@ -103,6 +105,7 @@ table { margin: 0 auto; }
 	position: absolute;
 	width: 20%;
     height: 40px;
+	top: 240px;
 	font-size: 20px;
 	line-height: 40px;
 	background-color: #00ff00;
@@ -165,6 +168,21 @@ table { margin: 0 auto; }
 	top: 100px;
 }
 
+
+
 input {
     cursor: pointer;
+}
+
+#opis {
+	position: absolute;
+	width: 45%;
+	left: 27.5%;
+    height: 20px;
+	top: 280px;
+	font-size: 15px;
+	line-height: 20px;
+	text-align: center;
+	background-color: #ffffff;
+	opacity: 0.75;
 }

@@ -205,36 +205,35 @@ function processMove(row,column)
     if(square.css("background-color") != "rgb(255, 255, 255)")
         return;
 
-    // save playing field id and old field color
+	// save playing field id and old field color
     var old_cid = "#c" + playingField.row + playingField.column;
     var old_clr = TTN.fieldColor(playingField.row, playingField.column);
-    // find square index from which take indices to update game state
+	// find square index from which take indices to update game state
     var id = square.attr("id");
 
-    // make move logically
+	// make move logically
     var ret = TTN.update(Number(id[1]),Number(id[2]),Number(id[3]),Number(id[4]), currentPlayer);
 
     // deal with results
-    if(ret > 0) {
-        // reset previous playing field color
-        $(old_cid).css("background-color", old_clr);
-        // change square's color
-        square.css("background-color", (currentPlayer == -1) ? player1Color : player2Color);
-        // set next player
-        currentPlayer *= -1;
-    }
-    if(ret > 1) {
+	if(ret == 0) // if wrong field was played
+		return;
+    // reset previous playing field color
+    $(old_cid).css("background-color", old_clr);
+    // change square's color
+    square.css("background-color", (currentPlayer == -1) ? player1Color : player2Color);
+    if(ret > 1) { // if small win
         // change color of won field if not won before
 		if(old_clr != player1Color && old_clr != player2Color)
-        	$(old_cid).css("background-color", (currentPlayer == -1) ? player2Color : player1Color);
+        	$(old_cid).css("background-color", (currentPlayer == -1) ? player1Color : player2Color);
     }
-    if(ret > 2) {
-        // change everything to winner color
-        //$("#gameTable").css("background-color", (currentPlayer == -1) ? player2Color : player1Color);
+    if(ret > 2) { // if game over
         // draw win screen
 		drawGameOver();
         return;
     }
+
+	// set next player
+    currentPlayer *= -1;
 	// set new playing field
     var cid = "#c" + playingField.row + playingField.column;
     $(cid).css("background-color", "#00ff00");
@@ -321,33 +320,40 @@ function drawGameOver()
 	// add overlay
 	container.append("<div class='overlay'></div>");
 	
+	var winner = (currentPlayer == -1) ? player1 : player2;
 	// append win text
-	container.append("<div id='gameOver'><span class='subtitle'>KRAJ IGRE!</span><br>" + ((currentPlayer == -1) ? player2 : player1) + " je pobijedio u " + (41-moveCount+1) + " poteza.</div>");
+	container.append("<div id='gameOver'><span class='subtitle'>KRAJ IGRE!</span><br>" + winner + ((winner == "Ti") ? " si" : " te") + " pobijedio u " + (41-moveCount+1) + " poteza.</div>");
 	$("#gameOver").css("top", "100px");
+
+	
+	// no save score option for losing or games with friends
+	if(winner != "Ti" || gameType == "2off") {
+		// append opis situacije
+		container.append("<p id='opis'>(porazi i igre s prijateljima se ne spremaju)</p>");
+		// append back to menu button
+    	container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
+		return;
+	}
 
 	// append save score button
 	container.append("<div id='saveScore' class='menuButtons'>Spremi rezultat</div>");
-	$("#saveScore").css("top", "240px");
+
 	// add score to database
 	$("#saveScore").on("click", function(){
-		if(gameType == "2off") {
-			$("#saveScore").append("<br>Ne sprema se rezultat za igre s prijateljima")
-		} else {
-			$.ajax({
-    			url : "../utils/spremiRezultat.php",
-      			data : { title : "Tic-Tac-NO", score : moveCount },
-        		success: function(data)
-        		{
-					$("#saveScore").append("<br>" + data);
-        		},
-        		error: function(xhr, status)
-        		{
-        			if(status!==null)
-            			console.log("Error prilikom Ajax poziva: "+status);
-        		},
-        		async: false
-				});
-		}
+		$.ajax({
+    		url : "../utils/spremiRezultat.php",
+      		data : { title : "Tic-Tac-NO", score : moveCount },
+        	success: function(data)
+        	{
+				container.append("<p id='opis'>" + data + "</p>");
+        	},
+        	error: function(xhr, status)
+        	{
+        		if(status!==null)
+           			console.log("Error prilikom Ajax poziva: "+status);
+        	},
+        	async: false
+		});
 	});
 
 	// append back to menu button
@@ -380,7 +386,7 @@ function drawHighscores()
     str += "</table>";
     container.append(str);
 
-    // ajax get highscores...
+    // get and fill highscores
     $.ajax(
         {
             url : "../utils/dohvatiListu.php",
@@ -388,16 +394,19 @@ function drawHighscores()
             type: "POST",
             success: function(data)
             {
-                highscores[0].player = data.prviIgrac;
-                highscores[0].score = data.prviBodovi;
-                highscores[1].player = data.drugiIgrac;
-                highscores[1].score = data.drugiBodovi;
-                highscores[2].player = data.treciIgrac;
-                highscores[2].score = data.treciBodovi;
-                highscores[3].player = data.cetvrtiIgrac;
-                highscores[3].score = data.cetvrtiBodovi;
-                highscores[4].player = data.petiIgrac;
-                highscores[4].score = data.petiBodovi;
+				var hNames = $(".hName");
+				var hScores = $(".hScore");
+				// fill columns with data obtained
+                hNames.eq(1).text(data.prviIgrac);
+                hScores.eq(1).text(data.prviBodovi);
+                hNames.eq(2).text(data.drugiIgrac);
+                hScores.eq(2).text(data.drugiBodovi);
+				hNames.eq(3).text(data.treciIgrac);
+                hScores.eq(3).text(data.treciBodovi);
+				hNames.eq(4).text(data.cetvrtiIgrac);
+                hScores.eq(4).text(data.cetvrtiBodovi);
+				hNames.eq(5).text(data.petiIgrac);
+                hScores.eq(5).text(data.petiBodovi);
             },
             error: function(xhr, status)
             {
@@ -406,16 +415,6 @@ function drawHighscores()
             },
             async: false
         });
-
-    // fill table with scores
-    var hNames = $(".hName");
-    for(var i = 0; i < 5; i++) {
-        hNames.eq(i+1).text(highscores[i].player);
-    }
-    var hScores = $(".hScore");
-    for(var i = 0; i < 5; i++) {
-        hScores.eq(i+1).text(highscores[i].score);
-    }
 
     // append back to menu button
     container.append("<div id='back' onclick='drawMenu()'>" + "<- meni</div>");
@@ -433,13 +432,13 @@ function drawSettings()
     container.append("<div id='settDiv'><form id='settingsForm'></form></div>");
 
     var str = "<span class='subtitle'>Izaberi pozadinsku boju:</span><br>";
-    str += "<input type='radio' name='bcolorSettings' value='white'> Bijela<br>";
-    str += "<input type='radio' name='bcolorSettings' value='grey'> Siva<br>";
-    str += "<input type='radio' name='bcolorSettings' value='brown'> Smeđa";
+    str += "<input type='radio' name='bcolorSettings' value='white'> <span style='color:white'>Bijela</span><br>";
+    str += "<input type='radio' name='bcolorSettings' value='grey'> <span style='color:grey'>Siva</span><br>";
+    str += "<input type='radio' name='bcolorSettings' value='brown'> <span style='color:brown'>Smeđa</span>";
 
     str += "<br><br><span class='subtitle'>Izaberi boje igrača:</span><br>";
-    str += "<input type='radio' name='pcolorSettings' value='pc1'> Crveni i Plavi<br>";
-    str += "<input type='radio' name='pcolorSettings' value='pc2'> Ljubičasti i Žuti<br>";
+    str += "<input type='radio' name='pcolorSettings' value='pc1'> <span style='color:red'>Crveni</span> i <span style='color:blue'>Plavi</span><br>";
+    str += "<input type='radio' name='pcolorSettings' value='pc2'> <span style='color:purple'>Ljubičasti</span> i <span style='color:yellow'>Žuti</span><br>";
 
     str += "<br><br><span class='subtitle'>Odaberi tip igre:</span><br>";
     str += "<input type='radio' name='gtypeSettings' value='AI'> Ti vs. AI<br>";

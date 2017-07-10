@@ -8,7 +8,7 @@
 		exit(0);
 	}
 
-
+	//ako si dobio broj riječi, vrati koliko riječi imaš u bazi
 	if(isset($_POST['brojrijeci']))
 	{
 		$ukupno = 0;
@@ -18,12 +18,19 @@
 			$st = $db->prepare( "SELECT id FROM rijeci");
 			$st->execute();
 		}
-		catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+		catch( PDOException $e ) 
+		{ 
+			exit( 'Greška u bazi: ' . $e->getMessage() ); 
+		}
 		
 		while($row=$st->fetch())
 			++$ukupno;
+		
+		//vrati broj riječi u bazi
 		echo $ukupno;
 	}
+
+	//ako si dobio idrijeci vrati riječ s tim id-jem
 	else if(isset($_POST['idrijeci']))
 	{
 		$id = intval($_POST['idrijeci']);
@@ -31,6 +38,7 @@
 		$db = DB::getConnection();
 		try
 		{
+			//dohvati riječ s tim id-jem
 			$st = $db->prepare( "SELECT * FROM rijeci WHERE id LIKE :id ");
 			$st->execute( array( 'id' => $id ) );
 		}

@@ -8,7 +8,7 @@
 		exit(0);
 	}
 
-
+	//ako si dobio brojpitanja, vrati koliko imaš pitanja u bazi
 	if(isset($_POST['brojpitanja']))
 	{
 		$ukupno = 0;
@@ -18,12 +18,19 @@
 			$st = $db->prepare( "SELECT id FROM pitanja");
 			$st->execute();
 		}
-		catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+		catch( PDOException $e ) 
+		{ 
+			exit( 'Greška u bazi: ' . $e->getMessage() ); 
+		}
 		
 		while($row=$st->fetch())
 			++$ukupno;
+
+		//vrati koliko je ukupno pitanja u bazi
 		echo $ukupno;
 	}
+
+	//ako si dobio idpitanja, vrati pitanje sa tim id-jem
 	else if(isset($_POST['idpitanja']))
 	{
 		$id = intval($_POST['idpitanja'])+1;
@@ -34,7 +41,10 @@
 			$st = $db->prepare( "SELECT * FROM pitanja WHERE id LIKE :id ");
 			$st->execute( array( 'id' => $id ) );
 		}
-		catch( PDOException $e ) { exit( 'Greška u bazi: ' . $e->getMessage() ); }
+		catch( PDOException $e ) 
+		{ 
+			exit( 'Greška u bazi: ' . $e->getMessage() ); 
+		}
 		
 		$row=$st->fetch();
 
