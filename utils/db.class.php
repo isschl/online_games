@@ -15,7 +15,7 @@ class DB
 	    {
 	    	try
 	    	{
-		    	DB::$db = new PDO( "mysql: host=rp2.studenti.math.hr; dbname=horvat; charset=utf8", 'student', 'pass.mysql' );
+		    	DB::$db = new PDO( "mysql: host=HOST; dbname=IME; charset=utf8", 'USER', 'SIFRA' );
 		    	DB::$db-> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		    }
 		    catch( PDOException $e ) { exit( 'PDO Error: ' . $e->getMessage() ); }
