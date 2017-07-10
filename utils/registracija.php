@@ -1,7 +1,13 @@
 <?php
 
+//ovo je zapravo cijela stranica pomoću koje se korisnici
+//prijavljuju u sustav(1. put) i potvrđuju registraciju
+
 require_once 'db.class.php';
 
+
+//ovo provjerava u slučaju je korisnik preko linka u mailu pristupio
+//dovršetku registracije
 function provjeri()
 {
 	if( !isset($_GET['niz']) )
@@ -47,11 +53,14 @@ function provjeri()
 	return 'ok';
 }
 
+
+//ovo je zapravo samo link na početnu stranicu
 function povratakForma()
 { ?>
 	<a href=".." > Povratak na po&#269;etnu stranicu </a>
 <?php }
 
+//poruka da zahvaljujemo na registraciji i link na početnu stranicu
 function zahvala()
 { ?>
 	<p style="color:green;"> Zahvaljujemo na prijavi. Provjerite e-mail za registraciju! </p>
@@ -59,6 +68,7 @@ function zahvala()
 <?php	povratakForma();
 }
 
+//daju formu u koju korisnik unosi podatke s kojima će se prijaviti u sustav
 function forma($greska)
 { ?>
 	<h1>Registrirajte se</h1> <hr />
@@ -82,33 +92,35 @@ function forma($greska)
 	<a href=".." > Povratak na po&#269;etnu stranicu </a>
 <?php }
 
+//provjera je li sve ispravno...
 function analiziraj_POST_login()
 {	
-	if( !isset( $_POST['username'] ) && !isset( $_POST['username'] ) && !isset( $_POST['username'] ) )
-		return 'prazno';
-	if( $_POST['username'] == '' && $_POST['username'] == '' && $_POST['username'] == '' )
-		return 'prazno';
+	//treba unijeti (neprazan) username
 	if( !isset( $_POST['username'] ) || $_POST['username'] == '')
 	{
 		$greska = 'Niste unijeli username!';
 		return $greska;
 	}
+	//treba unijeti (neprazan) password
 	if( !isset( $_POST['password'] ) || $_POST['password'] == '')
 	{
 		$greska = 'Niste unijeli password!';
 		return $greska;
 	}
+	//treba unijeti (neprazanu) e-mail adresu
 	if( !isset( $_POST['email'] ) || $_POST['email'] == '')
 	{
 		$greska = 'Niste unijeli email!';
 		return $greska;
 	}
+	//username se treba sastojati od 3 do 20 slova
 	if( !preg_match( '/^[a-zA-Z]{3,20}$/', $_POST['username'] ) )
 	{
 		$greska = 'Username mora imati od 3 do 20 slova';
 		return $greska;
 	}
 
+	//e-mail treba biti ispravan
 	if( !filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL) )
 	{
 		$greska = 'E-mail adresa nije ispravna!';
@@ -117,6 +129,7 @@ function analiziraj_POST_login()
 
 	$db = DB::getConnection();
 
+	//pogledaj je li to ime slobodno
 	try
 	{
 		$st = $db->prepare( 'SELECT * FROM userList WHERE username=:username' );
@@ -130,11 +143,12 @@ function analiziraj_POST_login()
 			return $greska;
 	}
 
+	//stvori slučajan niz slova za dovršetak registracije (koja ide preko mail-a)
 	$reg_seq = '';
 	for( $i = 0; $i < 10; ++$i )
 		$reg_seq .= chr( rand(0, 25) + ord( 'a' ) );
 
-
+	//pošalji onda taj mail korisniku sa linkom na stranicu za dovršetak registracije 
 	$to       = $_POST['email'];
 	$subject  = 'Registracijski mail';
 	$message  = 'Poštovani ' . $_POST['username'] . "!\nZa dovršetak registracije kliknite na sljedeći link: ";
@@ -151,6 +165,7 @@ function analiziraj_POST_login()
 		return $greska;
 	}
 
+	//ubaci korisnika u bazu - još se nije registrirao dok ne potvrdi preko mail-a
 	try
 	{
 	$st = $db->prepare( 'INSERT INTO userList(username, password, email, hasregistered, regseq) VALUES ' .
@@ -178,6 +193,8 @@ function analiziraj_POST_login()
 <body>
 	<?php
 	$registracija = provjeri();
+
+	//ako je registracija uspješno provedena, poruka u link na početnu stranicu
 	if( $registracija === 'ok' )
 	{
 		echo '<p style="color:blue" >';
@@ -204,4 +221,5 @@ function analiziraj_POST_login()
 	?>
 </body>
 </html>
+
 
