@@ -1,8 +1,10 @@
 <?php
 
 //ono sto se salje post-om: username, password, logout (true)
-	require_once 'db.class.php';
+	
+require_once 'db.class.php';
 
+//ispisuje login formu s odgovarajucom porukom
 function ispisiLoginFormu($poruka)
 {
 	echo '<p style="color: red" >'
@@ -11,12 +13,14 @@ function ispisiLoginFormu($poruka)
         .' <input type="text" id="username" /> <label for="password">'
 	.' &#352;ifra: </label> <input type="password" id="password" />'
 	.'<input type="button" id="loginklasa1" value="Log In">'
-	.'<form style="display: inline-block" method="post" action="../utils/registracija.php">'
+	.'<form style="display: inline-block" '
+	.'method="post" action="../utils/registracija.php">'
 	.'<label for="reg"> Novi ste ovdje? </label>'
 	.'<input type="submit" id="reg" value="Registracija" >'
 	.'</form>';
 }
 
+//ispisuje poruku uspješno prijavljen i daje gumb za logout i za gledanje svog profila
 function ispisiLogoutFormu($user)
 {
 	echo '<label for="loginklasa2" style="color: green">Uspje&#353;no ste prijavljeni, '
@@ -26,6 +30,7 @@ function ispisiLogoutFormu($user)
 	
 }
 
+//provjerava odgovaraju li username i sifra onima u bazi
 function validate( $user, $pass )
 {	
 	$db = DB::getConnection();
@@ -54,6 +59,7 @@ function validate( $user, $pass )
 	return 0;
 }
 
+
 	session_start();
 
 	$secret_word = 'empire';
@@ -64,6 +70,7 @@ function validate( $user, $pass )
 
 	if( isset( $_SESSION['login'] ) ) 
 	{
+		//provjeri igra li se itko sa sessionom
 		list( $c_username, $c_hash )
 			= explode( ',' , $_SESSION['login'] );
 		if( md5( $c_username . $secret_word ) === $c_hash )
@@ -78,25 +85,32 @@ function validate( $user, $pass )
 		}
 	}
 
-	else if( isset ( $_POST['username'] ) && isset( $_POST['password'] ) && validate ( $_POST['username'], $_POST['password'] ) === 1 )
+	else if( isset ( $_POST['username'] ) && isset( $_POST['password'] ) 
+		&& validate ( $_POST['username'], $_POST['password'] ) === 1 )
 	{
-		$_SESSION['login'] = $_POST['username'] . ',' . md5( $_POST['username'] . $secret_word );
+		//ako imamo i username i pass i ispravni su
+		$_SESSION['login'] = $_POST['username'] . ',' 
+			. md5( $_POST['username'] . $secret_word );
 		$username = $_POST['username'];
 		$ispis = 2;	
 	}
 	else if ( isset( $_POST['username'] ) && isset( $_POST['password'] ) ) 
 	{
+		//imamo i user i pass ali neispravni - gornji validate u if-u nije prošao
 		if( $_POST['username'] === '' && $_POST['password'] === '' )
 			$ispis = 1;
 		else 
 		{	
 			$ispis = 1;
 			if(validate ( $_POST['username'], $_POST['password'] ) === 2)	
-				$poruka = "Gre&#353;ka - korisnik nije potvrdio registraciju.";
+			   $poruka = "Gre&#353;ka - korisnik nije potvrdio registraciju.";
 			else
-				$poruka = "Gre&#353;ka - krivi username i/ili password. ";
+			   $poruka = "Gre&#353;ka - krivi username i/ili password. ";
 		}
 	}
+
+
+	//ako smo saznali da je netko bio u sessionu i sad se odjavljuje
 	if( isset ( $username ) && isset( $_POST['logout'] ) )
 	{
 		ispisiLoginFormu('Uspje&#353;no ste odjavljeni. Login: ');
@@ -104,7 +118,7 @@ function validate( $user, $pass )
 		session_unset();
 		session_destroy();
 	}
-	else
+	else //ovisno o vrijednosti ispisa od koda gore ispisi login ili logout formu
 	{
 		if($ispis === 1)
 			ispisiLoginFormu($poruka);
