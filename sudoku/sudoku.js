@@ -19,6 +19,7 @@ var cs = 1;
 var seconds = 0;
 var minutes = 0;
 var pause = false;
+var help = false;
 
 var Sudoku;
 var all = new Set([1,2,3,4,5,6,7,8,9]);
@@ -67,7 +68,6 @@ class Game {
 		num = this.state[Math.floor(r/3)][2][r%3][0]; if(num != 0) numbers.add(num);
 		num = this.state[Math.floor(r/3)][2][r%3][1]; if(num != 0) numbers.add(num);
 		num = this.state[Math.floor(r/3)][2][r%3][2]; if(num != 0) numbers.add(num);
-		console.log(numbers);
 		return numbers;
 	}
 	numbersInColumn(c) {
@@ -82,7 +82,6 @@ class Game {
 		num = this.state[2][Math.floor(c/3)][0][c%3]; if(num != 0) numbers.add(num);
 		num = this.state[2][Math.floor(c/3)][1][c%3]; if(num != 0) numbers.add(num);
 		num = this.state[2][Math.floor(c/3)][2][c%3]; if(num != 0) numbers.add(num);
-		console.log(numbers);
 		return numbers;
 	}
 	numbersInSquare(r,c) {
@@ -97,7 +96,6 @@ class Game {
 		num = this.state[r][c][2][0]; if(num != 0) numbers.add(num);
 		num = this.state[r][c][2][1]; if(num != 0) numbers.add(num);
 		num = this.state[r][c][2][2]; if(num != 0) numbers.add(num);
-		console.log(numbers);
 		return numbers;
 	}
 	
@@ -106,7 +104,6 @@ class Game {
 		ret = ret.union(this.numbersInRow(3*R+r));
 		ret = ret.union(this.numbersInColumn(3*C+c));
 		ret = ret.union(this.numbersInSquare(R,C));
-		console.log(ret);
 		return ret;
 	}
 
@@ -115,7 +112,6 @@ class Game {
 		
 		for(var i = 0; i < 9; i++) {
 			numbers = this.numbersInRow(i);
-			console.log(numbers.size);
 			if(numbers.size != 9) { console.log("row " + i); return false; }
 		}
 		for(var i = 0; i < 9; i++) {
@@ -236,13 +232,16 @@ function showChoices()
 	else
 		choices.css("position", "absolute").css("top", pos.top+40).css("left", pos.left+40);
 	choices.empty();
-	// calculate and append choices list
-	var present = Sudoku.RCS(Number(index[1]),Number(index[2]),Number(index[3]),Number(index[4]));
-	console.log("present " + present);
-	var missing = all.difference(present);
-	console.log(missing);	
+	
+	var missing = all;
+	if(help) { 
+		// calculate choices
+		var present = Sudoku.RCS(Number(index[1]),Number(index[2]),Number(index[3]),Number(index[4]));
+		missing = all.difference(present);
+	}	
+	// append choices
 	for(var el of missing)
-		choices.append("<button class='choice' value='"+el+"'>"+el+"</button>")
+	choices.append("<button class='choice' value='"+el+"'>"+el+"</button>")
 	$(".choice").on("click", function() { 
 		thisSquare.html($(this).attr("value"));
 		Sudoku.update(Number(index[1]),Number(index[2]),Number(index[3]),Number(index[4]),Number($(this).attr("value"))); 
@@ -290,8 +289,9 @@ function checkSolution()
 	if(done)
 		drawGameOver();
 	else {
+		$("#done").html("nisi");
 		$("#continue").show();
-		$("#continue").on("click", function() { pause = false; $(this).hide(); })
+		$("#continue").on("click", function() { pause = false; $("#done").html("GOTOV"); $(this).hide(); })
 	}
 }
 
@@ -307,9 +307,18 @@ function drawPlay()
     container.append("<button id='easy' class='gameButton' value='easy'>LAKO</button><br>");
 	container.append("<button id='medium' class='gameButton' value='medium'>SREDNJE</button><br>");
 	container.append("<button id='hard' class='gameButton' value='hard'>TEŠKO</button>  ");
+	container.append("<button id='help' value='hard'>uključi pomoć</button>  ");
 	container.append("<button id='done'>GOTOV</button>");
 	container.append("<button id='continue'>NASTAVI</button>");
 	$("#continue").hide();
+	
+	$("#help").on("click", function() { 
+		help = !help; 
+		if(help) 
+			$(this).html("isključi pomoć");
+		else
+			$(this).html("uključi pomoć"); 
+	});
 
 	// get random sudoku from database	
 	$(".gameButton").on("click", getSudoku);
@@ -398,10 +407,7 @@ function drawGameOver()
 	$("#saveScore").css("top", "240px");
 	// add score to database
 	$("#saveScore").on("click", function(){
-		if(true) {
-			$("#saveScore").append("<br>Ne sprema se rezultat za igre s prijateljima")
-		} else {
-			var result = Math.floor(100*60/(60*minutes + seconds));
+			var result = Math.floor(1000*60/(60*minutes + seconds));
 			console.log(result); 
 			$.ajax({
     			url : "../utils/spremiRezultat.php",
@@ -417,7 +423,6 @@ function drawGameOver()
         		},
         		async: false
 				});
-		}
 	});
 
 	// append back to menu button
