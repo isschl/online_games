@@ -15,6 +15,13 @@ var pocetna_pozicija = [5,200];
 var trenutna_pozicija;
 var vrijeme_zadnjeg_poteza, vrijeme_pocetka, vrijeme_kraja;
 var dozvoljen_potez = false; // potez nije dozvoljen dok ne prođe bar 2 sekunde od prethodnog poteza
+var zadnja_pozicija_misa;
+var mod2igraca = false; // je li odabrana igra za 2 igrača
+var igrac2 = false; // je li drugi igrač na potezu
+var potezi1 = []; // Za multiplayer pamtimo poteze 1. igrača u obliku [x koordinata, y koordinata, vrijeme]
+var igrac_na_potezu = 0; // Varijabla bitna samo za multiplayer, 1 za 1. igrača, 2 za 2. igrača.
+var potez_igraca1; // Koristi se dok je igrač 2 na potezu za crtanje staze 1. igrača.
+var vrijeme_prvog_igraca;
 
 var stanje_bez_kruznice;
 var zadnjih16pozicija = []; // možda i manje ako ih dosad nije bilo 16
@@ -37,19 +44,42 @@ var staza = lower_points.concat(upper_points.reverse());
 staza.push(staza[0]);
 
 var vrijeme_zadnjeg_poteza;
+var timeout_var;
 
 function drawMenu()
 {
     // clear container's current content
     container.empty();
     // append 4 menu buttons
-    container.append("<div id='play' class='menuButtons' onclick='drawPlay()'>" + "IGRAJ</div>");
+    container.append("<div id='play' class='menuButtons' onclick='drawPlay(false)'>" + "IGRAJ</div>");
+	container.append("<div id='twoplayers' class='menuButtons' onclick='drawPlay(true)'>" + "2 IGRAČA</div>");
     container.append("<div id='highscores' class='menuButtons' onclick='drawHighscores()'>" + "REZULTATI</div>");
 	container.append("<div id='help' class='menuButtons' onclick='drawHelp()'>" + "POMOĆ</div>");
 }
 
-function drawPlay()
+function drawPlay(mod)
 {
+	mod2igraca = mod;
+	if (mod2igraca===true)
+	{
+		if (igrac_na_potezu===1)
+		{
+			igrac_na_potezu = 2;
+			if (potezi1.length>0)
+			{
+				potez_igraca1 = 0;
+				timeoutvar = setTimeout(nacrtajCrvenuCrtu,potezi1[0][2]);
+				for (var i=0; i<potezi1.length; ++i)
+					console.log(potezi1[i][2]);
+			}
+		}
+		else
+		{
+			potezi1 = [];
+			igrac_na_potezu = 1;
+		}
+	}
+	
     // clear container's current content
     container.empty();
 	
@@ -94,6 +124,9 @@ function drawPlay()
 	  dy = y-trenutna_pozicija[1];
 	  ctx.putImageData(stanje_bez_kruznice,0,0);
 	  
+	  if(mod2igraca === true && igrac_na_potezu===2 && potez_igraca1>0)
+	    nacrtajCrveniPut();
+	  
 	  ctx.beginPath();
 	  ctx.arc(trenutna_pozicija[0], trenutna_pozicija[1], 15, 0, 2 * Math.PI, false);
       ctx.strokeStyle = dozvoljen_potez ? "#0000FF" : '#FF0000';
@@ -108,6 +141,8 @@ function drawPlay()
 		  ctx.strokeStyle = '#0000FF';
 		  ctx.stroke();
 	  }
+	  
+	  zadnja_pozicija_misa = [x,y];
 	})
 
     // append back to menu button
@@ -262,8 +297,6 @@ function obradiKlik (x,y)
 		if (jxcijeli === 1200)
 			gameOver();
 	}
-	
-	//console.log(trenutna_pozicija);
 }
 
 /* staza je zapravo mnogokut, saznajemo je li točka u stazi na način da nađemo najbližu rubnu točku i po njoj sve odredimo (ovisno o tome
@@ -278,7 +311,6 @@ function je_u_stazi (x,y)
 	
 	if (najblize.najmanja_udaljenost<Number.EPSILON)
 	{
-		//console.log("[1] "+najblize.najblizi_indeks+"  "+staza[najblize.najblizi_indeks]+"  "+staza[najblize.najblizi_indeks+1]);
 		return false;
 	}
 	else if (najblize.rub!==false)
@@ -299,7 +331,6 @@ function je_u_stazi (x,y)
 		dx2 = c[0]-a[0];
 		dy2 = c[1]-a[1];
 		
-		//console.log("[2] "+najblize.najblizi_indeks+"  a="+a+"  b="+b+"  c="+c+"  dx1="+dx1+"  dy1="+dy1+"  dx2="+dx2+"  dy2="+dy2);
 		return (dx1*dy2-dy1*dx2>0);
 	}
 	else
@@ -314,7 +345,6 @@ function je_u_stazi (x,y)
 		dx2 = c[0]-a[0];
 		dy2 = c[1]-a[1];
 		
-		//console.log("[3] "+najblize.najblizi_indeks+"  a="+a+"  b="+b+"  c="+c+"  dx1="+dx1+"  dy1="+dy1+"  dx2="+dx2+"  dy2="+dy2);
 		return (dx1*dy2-dy1*dx2>0);
 	}
 }
@@ -374,6 +404,9 @@ function pomakni_na_poziciju(nova_pozicija)
 	trenutna_pozicija = nova_pozicija;
 	nacrtajStazu();
 	
+	if (mod2igraca===true && igrac_na_potezu===2)
+		nacrtajCrveniPut();
+	
 	zadnjih16pozicija.push(trenutna_pozicija);
 	if (zadnjih16pozicija.length > 16)
 		zadnjih16pozicija.shift();
@@ -405,6 +438,9 @@ function pomakni_na_poziciju(nova_pozicija)
 		ctx.stroke();
 		dozvoljen_potez = true;
 	},2000);
+	
+	if (mod2igraca===true && igrac_na_potezu===1)
+		potezi1.push([trenutna_pozicija[0],trenutna_pozicija[1],vrijeme_zadnjeg_poteza-vrijeme_pocetka]);
 }
 
 function getHexColor(r,g,b)
@@ -423,10 +459,30 @@ function gameOver()
 	var trajanje_igre = vrijeme_kraja-vrijeme_pocetka;
 	var bodovi = Math.max(0,Math.round(1000-trajanje_igre/100));
 	
+	clearTimeout(timeout_var);
+	
 	container.empty();
-	container.append("<div id='gameOver''>" + "GOTOVO <br />"+
-					"trajanje igre: "+trajanje_igre/1000+" s <br />"+
+	container.append("<div id='gameOver''></div>");
+	if (mod2igraca===true)
+	{
+		if (igrac_na_potezu===1)
+		{
+			$("#gameOver").append("1. IGRAČ GOTOV <br />");
+			vrijeme_prvog_igraca = trajanje_igre;
+		}
+		else
+		{
+			if (trajanje_igre>vrijeme_prvog_igraca)
+				$("#gameOver").append("IGRA GOTOVA, POBIJEDNIK JE 1. IGRAČ. <br />");
+			else
+				$("#gameOver").append("IGRA GOTOVA, POBIJEDNIK JE 2. IGRAČ. <br />");
+		}
+	}
+	else
+		$("#gameOver").append("GOTOVO <br />");
+	$("#gameOver").append("trajanje igre: "+trajanje_igre/1000+" s <br />"+
 					"broj bodova: "+bodovi+"<br />");
+	
 	$.ajax(
 	{
 		url : " ../utils/dohvatiRezultat.php ",
@@ -437,12 +493,14 @@ function gameOver()
 		},
 		error: function(xhr, status)
 		{
-		if(status!==null)
-			console.log("Error prilikom Ajax poziva: "+status);
+			if(status!==null)
+				console.log("Error prilikom Ajax poziva: "+status);
 		},
 		async: false
 	});
-	container.append("</div>");
+	
+	if(mod2igraca===true && igrac_na_potezu===1)
+		container.append("<div id='secondPlayer' onclick='drawPlay(true)'>" + " Započni s 2. </div>");
 	
 	container.append("<div id='saveResult' onclick='saveResult("+bodovi+")'> Spremi rezultat </div>");
 	
@@ -458,16 +516,65 @@ function saveResult(bodovi)
 		data : { title : "Staza", score : bodovi },
 		success: function(data)
 		{
-			console.log(data);
 			container.empty();
 			container.append("<div id='gameOver''>" + data + "</div>");
+			console.log(mod2igraca + " " + igrac_na_potezu);
+			if(mod2igraca===true && igrac_na_potezu===1)
+				container.append("<div id='secondPlayer' onclick='drawPlay(true)'>" + " Započni s 2. </div>");
 			container.append("<div id='back' onclick='drawMenu()'>" + "Povratak</div>");
 		},	
 		error: function(xhr, status)
 		{
-		if(status!==null)
-		console.log("Error prilikom Ajax poziva: "+status);
+			if(status!==null)
+				console.log("Error prilikom Ajax poziva: "+status);
 		},
 		async: false
 	});
+}
+
+function nacrtajCrvenuCrtu()
+{
+	if (potez_igraca1>1)
+	{
+		ctx.beginPath();
+		ctx.moveTo(potezi1[potez_igraca1-1][0],potezi1[potez_igraca1-1][1]);
+		ctx.lineTo(potezi1[potez_igraca1][0],potezi1[potez_igraca1][1]);
+		ctx.strokeStyle = "red";
+		ctx.stroke();
+	}
+	
+	if (potez_igraca1<potezi1.length-1)
+	{
+		++potez_igraca1;
+		var t = potezi1[potez_igraca1][2]-(Date.now()-vrijeme_pocetka);
+		if (t>0)
+			timeoutvar = setTimeout(nacrtajCrvenuCrtu,t);
+		else
+			nacrtajCrvenuCrtu();
+	}
+}
+
+function nacrtajCrveniPut()
+{
+	var gb=0x00;
+	for (var i=potez_igraca1; i>=1 && i>=potez_igraca1-15; --i)
+	{
+		ctx.beginPath();
+		ctx.moveTo(potezi1[i][0],potezi1[i][1]);
+		ctx.lineTo(potezi1[i-1][0],potezi1[i-1][1]);
+		ctx.strokeStyle=getHexColor(0xFF,gb,gb);
+		ctx.stroke();
+		gb += 0x11;
+	}
+	
+	/*ctx.beginPath();
+	ctx.moveTo(potezi1[0][0],potezi1[0][1]);
+	if (potez_igraca1>=potezi1.length)
+		console.log("???");
+	for (var i=1; i<=potez_igraca1; ++i)
+	{
+		ctx.lineTo(potezi1[i][0],potezi1[i][1]);
+	}
+	ctx.strokeStyle = "red";
+	ctx.stroke();*/
 }

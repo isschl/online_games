@@ -40,6 +40,10 @@
     background-color: #00ff00;
     margin-top: 130px;
 }
+#twoplayers{
+	font-size: 30px;
+	background-color: yellow;
+}
 #settings {
     font-size: 35px;
     background-color: #123456;
@@ -52,11 +56,24 @@
     background-color: #ff00ff;
 }
 
+#secondPlayer {
+    width: 100px;
+    height: 30px;
+    background-color: red;
+    border: 1px solid;
+    text-align: center;
+    font-size: 15px;
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    line-height: 30px;
+}
+
 #saveResult {
     width: 100px;
     height: 30px;
     background-color: green;
-    border: 1px solid #00ff00;
+    border: 1px solid;
     text-align: center;
     font-size: 15px;
     position: absolute;
