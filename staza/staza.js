@@ -1,5 +1,5 @@
 /*======================================================================================================================
-                                    Igra1 functionality implementation
+                                    Staza functionality implementation
 ======================================================================================================================*/
 
 /*===============================================  GLOBAL VARIABLES  =================================================*/
@@ -13,8 +13,10 @@ var Canvas;
 var ctx;
 var pocetna_pozicija = [5,200];
 var trenutna_pozicija;
+var vrijeme_zadnjeg_poteza, vrijeme_pocetka, vrijeme_kraja;
+var dozvoljen_potez = false; // potez nije dozvoljen dok ne prođe bar 2 sekunde od prethodnog poteza
 
-var stanje_bez_crte;
+var stanje_bez_kruznice;
 var zadnjih16pozicija = []; // možda i manje ako ih dosad nije bilo 16
 
 var upper_points = [[0,162], [115,64], [195,43], [206,31], [266,48], [296,88], [293,116], [320,189], [313,205], [284,212], [264,230], [351,291], [377,297],
@@ -34,10 +36,8 @@ if (upper_points[0][0]!==0 || upper_points[upper_points.length-1][0]!==1200 || l
 var staza = lower_points.concat(upper_points.reverse());
 staza.push(staza[0]);
 
-/*================================================  LOGIC FUNCTIONS  ==================================================*/
+var vrijeme_zadnjeg_poteza;
 
-
-/*==============================================  SCREEN INITIALIZERS  ===============================================*/
 function drawMenu()
 {
     // clear container's current content
@@ -63,6 +63,7 @@ function drawPlay()
 	nacrtajStazu();
 	
 	zadnjih16pozicija = [];
+	vrijeme_pocetka = Date.now();
 	pomakni_na_poziciju(pocetna_pozicija);
 	ctx.beginPath();
     ctx.arc(trenutna_pozicija[0], trenutna_pozicija[1], 4, 0, 2 * Math.PI, false);
@@ -91,7 +92,13 @@ function drawPlay()
 	  var dx,dy;
 	  dx = x-trenutna_pozicija[0];
 	  dy = y-trenutna_pozicija[1];
-	  ctx.putImageData(stanje_bez_crte,0,0);
+	  ctx.putImageData(stanje_bez_kruznice,0,0);
+	  
+	  ctx.beginPath();
+	  ctx.arc(trenutna_pozicija[0], trenutna_pozicija[1], 15, 0, 2 * Math.PI, false);
+      ctx.strokeStyle = dozvoljen_potez ? "#0000FF" : '#FF0000';
+      ctx.stroke();
+	  
 	  if (kvadrat(dx)+kvadrat(dy)<230) // u krugu radijusa 15
 	  {
 		  var norma = Math.sqrt(kvadrat(dx)+kvadrat(dy));
@@ -176,14 +183,15 @@ function drawHelp()
     container.empty();
 	
 	container.append("<div id='helpText'></div>");
-    var str = "Prijeđi put u što kraćem vremenu krećući se ravnim linijama.<br>";
+    var str = "Prijeđi put u što kraćem vremenu krećući se ravnim linijama.<br />"+
+			  "Smjer sljedeće linije odabire se klikom unutar plavog kruga.<br />"+
+			  "Između poteza treba proći barem 2 sekunde (prije toga je krug crven) <br />";
     $("#helpText").append(str);
 
     // append back to menu button
     container.append("<div id='back' onclick='drawMenu()'>" + "back to menu</div>");
 }
 
-/*================================================  GAME INITIALIZER  ================================================*/
 $(document).ready( function()
 {
     container = $("#gameContainer");
@@ -196,6 +204,7 @@ function nacrtajStazu()
 	ctx.fillStyle = "#CCFFCC";
 	ctx.fill();
 	
+	ctx.beginPath();
 	ctx.moveTo(staza[0][0], staza[0][1]);
 	for (var i=1; i<staza.length; ++i)
 		ctx.lineTo(staza[i][0], staza[i][1]);
@@ -247,7 +256,7 @@ function obradiKlik (x,y)
 	tx = Math.round(tx);
 	ty = Math.round(ty);
 	
-	if (tx!==trenutna_pozicija[0] || ty!==trenutna_pozicija[1])
+	if ((tx!==trenutna_pozicija[0] || ty!==trenutna_pozicija[1]) && dozvoljen_potez===true)
 	{
 		pomakni_na_poziciju([jxcijeli,jycijeli]);
 		if (jxcijeli === 1200)
@@ -364,10 +373,6 @@ function pomakni_na_poziciju(nova_pozicija)
 {
 	trenutna_pozicija = nova_pozicija;
 	nacrtajStazu();
-	ctx.beginPath();
-    ctx.arc(trenutna_pozicija[0], trenutna_pozicija[1], 15, 0, 2 * Math.PI, false);
-    ctx.strokeStyle = '#0000FF';
-    ctx.stroke();
 	
 	zadnjih16pozicija.push(trenutna_pozicija);
 	if (zadnjih16pozicija.length > 16)
@@ -383,10 +388,27 @@ function pomakni_na_poziciju(nova_pozicija)
 		rg += 0x11;
 	}
 	
-	stanje_bez_crte = ctx.getImageData(0,0,1200,400);
+	stanje_bez_kruznice = ctx.getImageData(0,0,1200,400);
+	
+	ctx.beginPath();
+    ctx.arc(trenutna_pozicija[0], trenutna_pozicija[1], 15, 0, 2 * Math.PI, false);
+    ctx.strokeStyle = '#FF0000';
+    ctx.stroke();
+	
+	vrijeme_zadnjeg_poteza = Date.now();
+	dozvoljen_potez = false;
+	setTimeout(function()
+	{
+		ctx.beginPath();
+		ctx.arc(trenutna_pozicija[0], trenutna_pozicija[1], 15, 0, 2 * Math.PI, false);
+		ctx.strokeStyle = '#0000FF';
+		ctx.stroke();
+		dozvoljen_potez = true;
+	},2000);
 }
 
-function getHexColor(r,g,b){
+function getHexColor(r,g,b)
+{
     return "#"+('000000'+((r*0x10000+g*0x100+b)>>>0).toString(16)).slice(-6);
 }
 
@@ -397,9 +419,55 @@ function kvadrat(x)
 
 function gameOver()
 {
-	container.empty()
-	container.append("<div id='gameOver''>" + "GOTOVO</div>");
+	vrijeme_kraja = Date.now();
+	var trajanje_igre = vrijeme_kraja-vrijeme_pocetka;
+	var bodovi = Math.max(0,Math.round(1000-trajanje_igre/100));
+	
+	container.empty();
+	container.append("<div id='gameOver''>" + "GOTOVO <br />"+
+					"trajanje igre: "+trajanje_igre/1000+" s <br />"+
+					"broj bodova: "+bodovi+"<br />");
+	$.ajax(
+	{
+		url : " ../utils/dohvatiRezultat.php ",
+		data : { title : "Staza" },
+		success: function(data)
+		{
+			$("#gameOver").append("moj najbolji rezultat: "+data);
+		},
+		error: function(xhr, status)
+		{
+		if(status!==null)
+			console.log("Error prilikom Ajax poziva: "+status);
+		},
+		async: false
+	});
+	container.append("</div>");
+	
+	container.append("<div id='saveResult' onclick='saveResult("+bodovi+")'> Spremi rezultat </div>");
 	
 	// append back to menu button
     container.append("<div id='back' onclick='drawMenu()'>" + "Povratak</div>");
+}
+
+function saveResult(bodovi)
+{
+	$.ajax(
+	{
+		url : "../utils/spremiRezultat.php ",
+		data : { title : "Staza", score : bodovi },
+		success: function(data)
+		{
+			console.log(data);
+			container.empty();
+			container.append("<div id='gameOver''>" + data + "</div>");
+			container.append("<div id='back' onclick='drawMenu()'>" + "Povratak</div>");
+		},	
+		error: function(xhr, status)
+		{
+		if(status!==null)
+		console.log("Error prilikom Ajax poziva: "+status);
+		},
+		async: false
+	});
 }
