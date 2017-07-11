@@ -1,5 +1,5 @@
 /*======================================================================================================================
-                                        Sudoku functionality implementation
+                                        Sudoku functionality implementation.
 ======================================================================================================================*/
 
 /*===============================================  GLOBAL VARIABLES  =================================================*/
@@ -21,6 +21,8 @@ var minutes = 0;
 var pause = false;
 
 var Sudoku;
+var all = new Set([1,2,3,4,5,6,7,8,9]);
+
 
 /*===================================================  GAME LOGIC  ===================================================*/
 class Game {
@@ -40,7 +42,7 @@ class Game {
         this.state = gameState;
 		// fill (sudokus are stored line by line)
 		for(var i = 0; i < 81; i++)
-			this.state[Math.floor(i/27)][Math.floor((i%9)/3)][Math.floor(i/9)%3][i%3] = str.charAt(i);
+			this.state[Math.floor(i/27)][Math.floor((i%9)/3)][Math.floor(i/9)%3][i%3] = Number(str.charAt(i));
 	}
 
 	get numbers() { return this.state; }  
@@ -49,54 +51,98 @@ class Game {
 		this.state[i][j][k][l] = value;
     }
 
+	/* manje linija, ali još čudnovatije
+	for(var i = 0; i < 9; i++)
+		this.state[Math.floor(row/3)][Math.floor(i/3)][row%3][i%3];
+	*/
+	numbersInRow(r) {
+		var numbers = new Set();
+		var num;
+		num = this.state[Math.floor(r/3)][0][r%3][0]; if(num != 0) numbers.add(num);
+		num = this.state[Math.floor(r/3)][0][r%3][1]; if(num != 0) numbers.add(num);
+		num = this.state[Math.floor(r/3)][0][r%3][2]; if(num != 0) numbers.add(num);
+		num = this.state[Math.floor(r/3)][1][r%3][0]; if(num != 0) numbers.add(num);
+		num = this.state[Math.floor(r/3)][1][r%3][1]; if(num != 0) numbers.add(num);
+		num = this.state[Math.floor(r/3)][1][r%3][2]; if(num != 0) numbers.add(num);
+		num = this.state[Math.floor(r/3)][2][r%3][0]; if(num != 0) numbers.add(num);
+		num = this.state[Math.floor(r/3)][2][r%3][1]; if(num != 0) numbers.add(num);
+		num = this.state[Math.floor(r/3)][2][r%3][2]; if(num != 0) numbers.add(num);
+		console.log(numbers);
+		return numbers;
+	}
+	numbersInColumn(c) {
+		var numbers = new Set();
+		var num;
+		num = this.state[0][Math.floor(c/3)][0][c%3]; if(num != 0) numbers.add(num);
+		num = this.state[0][Math.floor(c/3)][1][c%3]; if(num != 0) numbers.add(num);
+		num = this.state[0][Math.floor(c/3)][2][c%3]; if(num != 0) numbers.add(num);
+		num = this.state[1][Math.floor(c/3)][0][c%3]; if(num != 0) numbers.add(num);
+		num = this.state[1][Math.floor(c/3)][1][c%3]; if(num != 0) numbers.add(num);
+		num = this.state[1][Math.floor(c/3)][2][c%3]; if(num != 0) numbers.add(num);
+		num = this.state[2][Math.floor(c/3)][0][c%3]; if(num != 0) numbers.add(num);
+		num = this.state[2][Math.floor(c/3)][1][c%3]; if(num != 0) numbers.add(num);
+		num = this.state[2][Math.floor(c/3)][2][c%3]; if(num != 0) numbers.add(num);
+		console.log(numbers);
+		return numbers;
+	}
+	numbersInSquare(r,c) {
+		var numbers = new Set();
+		var num;
+		num = this.state[r][c][0][0]; if(num != 0) numbers.add(num);
+		num = this.state[r][c][0][1]; if(num != 0) numbers.add(num);
+		num = this.state[r][c][0][2]; if(num != 0) numbers.add(num);
+		num = this.state[r][c][1][0]; if(num != 0) numbers.add(num);
+		num = this.state[r][c][1][1]; if(num != 0) numbers.add(num);
+		num = this.state[r][c][1][2]; if(num != 0) numbers.add(num);
+		num = this.state[r][c][2][0]; if(num != 0) numbers.add(num);
+		num = this.state[r][c][2][1]; if(num != 0) numbers.add(num);
+		num = this.state[r][c][2][2]; if(num != 0) numbers.add(num);
+		console.log(numbers);
+		return numbers;
+	}
+	
+	RCS(R,C,r,c) {
+		var ret = new Set();
+		ret = ret.union(this.numbersInRow(3*R+r));
+		ret = ret.union(this.numbersInColumn(3*C+c));
+		ret = ret.union(this.numbersInSquare(R,C));
+		console.log(ret);
+		return ret;
+	}
+
 	check() {
-		var sum = 0;
-		// rows
-		for(var row = 0; row < 9; row++) {
-			for(var i = 0; i < 9; i++)
-				sum += this.state[Math.floor(row/3)][Math.floor(i/3)][row%3][i%3];
-			if(sum != 45) {
-				console.log("row " + row);
-				return false;
-			}
-			sum = 0;	
+		var numbers = new Set();
+		
+		for(var i = 0; i < 9; i++) {
+			numbers = this.numbersInRow(i);
+			console.log(numbers.size);
+			if(numbers.size != 9) { console.log("row " + i); return false; }
 		}
-		/* columns
-		this.state[0][col][0][0];
-		this.state[0][col][1][0];
-		this.state[0][col][2][0];
-		this.state[1][col][0][0];
-		this.state[1][col/3][1][0];
-		this.state[1][col/3][2][0];
-		this.state[2][0][col/3][0];
-		this.state[2][0][col/3][0];
-		this.state[2][0][col/3][0];*/
-		for(var col = 0; col < 9; col++) {
-			for(var i = 0; i < 9; i++)
-				sum += this.state[Math.floor(i/3)][Math.floor(col/3)][i%3][col%3];
-			if(sum != 45) {
-				console.log("col " + col);
-				return false;
-			}
-			sum = 0;
+		for(var i = 0; i < 9; i++) {
+			numbers = this.numbersInColumn(i);
+			if(numbers.size != 9) { console.log("row " + i); return false; }
 		}
-		// squares
 		for(var i = 0; i < 3; i++)
-    		for(var j = 0; j < 3; j++) {
-  	      		for (var k = 0; k < 3; k++)
-     	     		for (var l = 0; l < 3; l++)
-						sum += this.state[i][j][k][l];
-				if(sum != 45) {
-					console.log("square " + i + j);
-					return false;
-				}
-				sum = 0;
-				}
+			for(var j = 0; j < 3; j++) {
+				numbers = this.numbersInSquare(i,j);
+				if(numbers.size != 9) { console.log("square " + i+j); return false; }		
+			}
 		return true;
 	}
 }
 
-
+Set.prototype.union = function(setB) {
+	var union = new Set(this);
+	for(var el of setB)
+		union.add(el);
+	return union;
+}
+Set.prototype.difference = function(setB) {
+	var difference = new Set(this);
+	for(var el of setB)
+		difference.delete(el);
+	return difference;
+}
 /*==============================================  SCREEN INITIALIZERS  ===============================================*/
 function drawUnfinished()
 {
@@ -190,11 +236,16 @@ function showChoices()
 	else
 		choices.css("position", "absolute").css("top", pos.top+40).css("left", pos.left+40);
 	choices.empty();
-	// append choices list
-	for(var i=0; i<9; i++)
-		choices.append("<button class='choice' value='"+(i+1)+"'>"+(i+1)+"</button>")
+	// calculate and append choices list
+	var present = Sudoku.RCS(Number(index[1]),Number(index[2]),Number(index[3]),Number(index[4]));
+	console.log("present " + present);
+	var missing = all.difference(present);
+	console.log(missing);	
+	for(var el of missing)
+		choices.append("<button class='choice' value='"+el+"'>"+el+"</button>")
 	$(".choice").on("click", function() { 
-		thisSquare.html($(this).attr("value")); 
+		thisSquare.html($(this).attr("value"));
+		Sudoku.update(Number(index[1]),Number(index[2]),Number(index[3]),Number(index[4]),Number($(this).attr("value"))); 
 		choices.hide(); 
 	});
 	choices.show();
@@ -339,7 +390,7 @@ function drawGameOver()
 	$("#overlay").css("top", "0px");
 	 
 	// append win text
-	container.append("<div id='gameOver'><span class='subtitle'>KRAJ IGRE!</span><br>Vrijeme = " + minutes + ":" + seconds + ":" + ms + "</div>");
+	container.append("<div id='gameOver'><span class='subtitle'>KRAJ IGRE!</span><br>Vrijeme = " + minutes + ":" + seconds + ":" + cs + "</div>");
 	$("#gameOver").css("top", "100px");
 
 	// append save score button
@@ -350,9 +401,11 @@ function drawGameOver()
 		if(true) {
 			$("#saveScore").append("<br>Ne sprema se rezultat za igre s prijateljima")
 		} else {
+			var result = Math.floor(100*60/(60*minutes + seconds));
+			console.log(result); 
 			$.ajax({
     			url : "../utils/spremiRezultat.php",
-      			data : { title : "Sudoku", score : moveCount },
+      			data : { title : "Sudoku", score : result },
         		success: function(data)
         		{
 					$("#saveScore").append("<br>" + data);
