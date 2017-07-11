@@ -48,6 +48,21 @@ function processMove(row,column)
 }
 
 /*==============================================  SCREEN INITIALIZERS  ===============================================*/
+function drawUnfinished()
+{
+	// container color
+	container.css("background-color", backgroundColor);
+
+	// add overlay
+	container.append("<div id='overlay'></div>");
+	$("#overlay").css("top", "0px");
+	
+	container.append("<div style='position:absolute;width:100%;height:20%;top:20%;text-align:center;color:white;font-size:30px'>Igra je u početnom stadiju izrade...</div>");
+	// add try button	
+	container.append("<button id='try' style='position:absolute;width:10%;height:10%;top:45%;left:45%'>Pogledaj</button>");
+	$("#try").on("click", drawMenu);
+}
+
 function drawMenu()
 {
     // clear container's current content
@@ -277,5 +292,5 @@ $(document).ready( function()
 {
     Sudoku = new Game();
     container = $("#gameContainer");
-    drawMenu();
+    drawUnfinished();
 });

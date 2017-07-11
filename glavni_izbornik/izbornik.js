@@ -1,30 +1,44 @@
 $(document).ready(function(){
 	
+	//varijable koje opisuju stanje sustava - svaki od canvasa nešto treba	
+	
+	//varijable za prikaz vješala
 	var kut = 0; //kasnije ide još *Math.PI	
 	var smjer = 1;
+
+	//postavljeni intervali za svaki od canvasa
 	var animVjesala = setInterval(crtajAnimaciju, 100);
 	var animKrizic = setInterval(crtajKrizic,500);
 	var animUpitnik = setInterval(crtajUpitnik, 1000);
 	var animStaza = setInterval(crtajStazu, 100);
 	var animSudoku = setInterval(crtajSudoku,700);
 
-	var brojPolja = 0;
-	var naRedu = 1;
-	var ispunjena = new Array();
+	//varijable za prikaz križić kružića
+	var brojPolja = 0; //koliko je polja ispunjeno bojom
+	var naRedu = 1; //koja je boja na redu
+	var ispunjena = new Array(); //koja su polja ispunjena
+	//boja za pojedino već ispunjeno polje iz gornje liste
 	var bojePolja = new Array();
+	//boja za prvog igrača
 	var boja1 = "rgb(0,0,255)";
+	//boja za drugog igrača
 	var boja2 = "rgb(255,0,0)";
 
+	//varijable za prikaz upitnika - moguća slova kao mogući odgovori
 	var slova = ['A','B','C','D'];
 
 	
-
+	//ovaj dio ovdje nije objašnjen - ovo je prikaz iz koda od igre
+	//vješala i tamo se nalazi detaljno objašnjen - no, tamo je prikaz veći
+	//kako onda ovdje? - pa pametnim dodatkom scale (za smanjenje) i translate
 	function crtajTruplo()
 	{
 		var ctx = $("#vjesala").get(0).getContext("2d");
 
 		ctx.save();
 		ctx.lineWidth = 4;
+
+		//sada ovi scale i translate
 		ctx.scale(0.5,0.5); ctx.translate(35,0);
 		ctx.beginPath();
 		ctx.moveTo(10,350); ctx.lineTo(110,350); //baza
@@ -66,7 +80,10 @@ $(document).ready(function(){
 
 		crtajTruplo();
 	}
+	//kraj dijela za prikaz vješala
 
+
+	//za prikaz križić kružića
 	function crtajKrizic()
 	{
 		//isprazni canvas
@@ -78,9 +95,11 @@ $(document).ready(function(){
 		//treba li crtati iznova?
 		if(brojPolja === 9)
 		{
+			//treba - resetiraj sustav
 			brojPolja = 0;
 			ispunjena = new Array();
 			bojePolja = new Array();
+			//odaberi nove random boje za igrače
 			boja1 = "rgb("+Math.floor(Math.random()*256)
 				+","+Math.floor(Math.random()*256)
 				+","+Math.floor(Math.random()*256)+")";
@@ -93,10 +112,11 @@ $(document).ready(function(){
 		var kojePolje = Math.floor(Math.random()*9);
 		while( ispunjena.indexOf(kojePolje) !== -1 )
 			kojePolje = Math.floor(Math.random()*9);
+
+		//zabilježi da je to polje od sada ispunjeno
 		ispunjena.push(kojePolje);
 
-
-		//koja je boja za polje
+		//koja je boja za polje - ovisi koji je igrač na redu
 		if( naRedu === 1 )
 			bojePolja.push(boja1);
 		else
@@ -111,7 +131,7 @@ $(document).ready(function(){
 			ctx.fillRect(Math.floor(redak*h/3),Math.floor(stupac*w/3),Math.floor(w/3),Math.floor(h/3));
 		}
 
-		//iscrtaj vodoravne i okomite crte
+		//iscrtaj vodoravne i okomite crte(tzv. mrežu)
 		ctx.lineWidth = 3;
 		ctx.beginPath();
 		
@@ -128,10 +148,12 @@ $(document).ready(function(){
 		ctx.stroke();
 
 		//promijeni stanje sustava
-		++brojPolja;
-		naRedu = 1 - naRedu;	
+		++brojPolja; //jedno polje više obojano
+		naRedu = 1 - naRedu; //sada je drugi igrač na redu
 	}
 
+
+	//sada kod za crtanje igre upitnik
 	function crtajUpitnik()
 	{
 		//isprazni canvas
@@ -140,25 +162,32 @@ $(document).ready(function(){
 		var h = $("#upitnik").height();
 		ctx.clearRect(0,0,w,h);
 
+		//namjesti postavke za pisanje po canvasu
 		ctx.font= Math.floor(h/5)+"px Arial";
 		ctx.textAlign = "center";
 		ctx.lineWidth = 3;
+		//koji je od četiri odgovora odabran (A,B,C,D)
 		var odabran = Math.floor(Math.random()*4);
 
 		for(var i = 0; i < 4; ++i)
 		{
+			//bojam zeleno odabran odgovor, ostali su crne boje
 			if( i === odabran )
 				ctx.fillStyle = "green";
 			else
 				ctx.fillStyle = "black";
 
-			ctx.fillText(slova[i],Math.floor(3*w/4),Math.floor((i+1)*h/4-h/24));
+			ctx.fillText(slova[i],Math.floor(3*w/4),
+				Math.floor((i+1)*h/4-h/24));
 
+			//kućica ispred odabranog odgovora ispuni se zelenom bojom
 			if( i === odabran )
 			{	
-				ctx.fillRect(Math.floor(w/4),Math.floor(i*h/4+h/24),Math.floor(w/5),Math.floor(h/6));
+				ctx.fillRect(Math.floor(w/4),Math.floor(i*h/4+h/24),
+					Math.floor(w/5),Math.floor(h/6));
 			}
-			ctx.strokeRect(Math.floor(w/4),Math.floor(i*h/4+h/24),Math.floor(w/5),Math.floor(h/6));
+			ctx.strokeRect(Math.floor(w/4),Math.floor(i*h/4+h/24),
+				Math.floor(w/5),Math.floor(h/6));
 				
 			//crtaj upitnik kod odabranog odgovora
 			if( i === odabran )
@@ -170,15 +199,23 @@ $(document).ready(function(){
 	
 	}
 
-	var tockex = new Array();
-	var tockey = new Array();
-	var boje = new Array();
-	var novax = 0;
-	var novay = 0;
-	var smjerx = 1;
-	var smjery = 1;
+	//varijable za prikaz za igru Staza
+	//pamte se tzv. točke u kojima su prijelomi
+	var tockex = new Array(); //njihove x-koordinate
+	var tockey = new Array(); //njihove y-koordinate
+	var boje = new Array(); //nakon sudara, mijenja se boja crte
+	var novax = 0; //ovo su x-koord i ispod y-koord kojima se krećemo td.
+	var novay = 0; //dobijemo dojam da se crta sama produžuje
+	var smjerx = 1; //smjer u x-u u kojem crta napreduje
+	var smjery = 1; //smjer u y-u u koje crta napreduje
+	//ovo gore se da je nova točka staraxkoord + smjerx (slično za y)
+	
+	//nakon desetak odbijanja, crtamo ispočetka, ali što na početku?
+	//treba ova varijabla (ili mogi smo broj odbijanja dosad staviti
+	//na nešto veće od 10, ali ovo je intuitivnije
 	var begin = 0;
 
+	//pomoćna funkcija, vraća predznak varijable
 	function predznak(varijabla)
 	{
 		if(varijabla > 0)
@@ -194,12 +231,17 @@ $(document).ready(function(){
 		var h = $("#staza").height();
 		ctx.clearRect(0,0,w,h);
 	
+		//ako imaš previše odbijanja ili smo tek počeli - crtaj ispočetka
 		if( tockex.length >= 10 || begin === 0)
 		{
-			begin = 1;
+			begin = 1; //znači nema više, samo jednom krenem od 0
+			
+			//resetiraj stanje sustava (vrijednosti varijabli)
 			tockex = new Array();
 			tockey = new Array();
 			boje = new Array();
+			
+			//odaberi slučajan smjer u kojem će crta rasti(po x, po y)
 			if(Math.floor(Math.random()*2) === 1)
 				smjerx = Math.floor(Math.random()*5+2);
 			else
@@ -209,19 +251,23 @@ $(document).ready(function(){
 			else
 				smjery = - Math.floor(Math.random()*5+2);
 
+			//odaberi slučajnu boje te sad već početne crte
 			var randomBoja = "rgb("+Math.floor(Math.random()*256)
 				+","+Math.floor(Math.random()*256)
 				+","+Math.floor(Math.random()*256)+")";
 			boje.push(randomBoja);
 
+			//ovo je i nova, ali i početna točka (random)
 			novax = Math.floor(Math.random()*(w/4)+w/4);
 			novay = Math.floor(Math.random()*(h/4)+h/4);
 			tockex.push(novax);
 			tockey.push(novay);
 		}
 		
+		//namjesti debljinu linije kojom crtamo
 		ctx.lineWidth = 5;		
 
+		//iscrtaj već zabilježene točke sudara i crte među njima(bojom[i])
 		var i = 0;
 		for( i = 0; i < tockex.length-1; ++i )
 		{
@@ -232,10 +278,13 @@ $(document).ready(function(){
 			ctx.stroke();
 		}
 		
+		//crtaj ovaj dio zbog kojeg imamo dojam da se kreće
 		ctx.beginPath();
 		ctx.strokeStyle = boje[i];
 		ctx.moveTo(tockex[i],tockey[i]);
 
+		//ako je sudar jer bi u sljedećem koraku išli previše lijevo
+		//ili desno, promijeni smjer u x-u
 		if( novax+smjerx >= w || novax+smjerx <= 0 ) 
 		{
 			smjerx = (-1)*predznak(smjerx)*Math.floor(Math.random()*5+2);
@@ -248,6 +297,7 @@ $(document).ready(function(){
 			tockey.push(novay);
 
 		}
+		//kao u prošlom komentaru, ali sad po y-u
 		if( novay+smjery >= h || novay+smjery <= 0 ) 
 		{
 			smjerx = predznak(smjerx)*Math.floor(Math.random()*5+2);
@@ -260,15 +310,18 @@ $(document).ready(function(){
 			tockey.push(novay);
 		}
 		
+		//produži crtu
 		novax += smjerx;
 		novay += smjery;
 
+		//povuci tu produženu crtu po canvasu
 		ctx.lineTo(novax,novay);
 
 		ctx.stroke();
 
 	}
 
+	//ovaj donji kod je varijacija na temu koda za krizic kruzic(vidi gore)
 	var brojSudokuPolja = 0;
 	var ispunjenaSudokuPolja = new Array();
 
@@ -303,7 +356,7 @@ $(document).ready(function(){
 			ctx.fillText(i+1,Math.floor(redak*h/3)+5,Math.floor((stupac+1)*w/3)-5);
 		}
 
-		//iscrtaj vodoravne i okomite crte
+		//iscrtaj vodoravne i okomite crte(tzv. mrezu)
 		ctx.lineWidth = 3;
 		ctx.beginPath();
 		
@@ -319,13 +372,14 @@ $(document).ready(function(){
 
 		ctx.stroke();
 
-		//promijeni stanje sustava
+		//promijeni stanje sustava - jedno polje više popunjeno
 		++brojSudokuPolja;	
 	}
 
 
-
 	
+	//podesi svaki od canvasa kao link na pripadnu igru
+
 	$("#vjesala").on("click",function()
 	{
 		window.open("../hangman","_self");
@@ -347,12 +401,15 @@ $(document).ready(function(){
 		window.open("../sudoku","_self");
 	});
 	
+	//u informacijama je info i igrama, prikazuje ga kod ispod ovog koda
 	$("#informacije")
 		.hide()
 		.css("background-color","rgb(249, 249, 249)")
 		.css("position","absolute")
 		.css("width","200");
 
+	//dakle, na ulazak mišem u područje pripadnog canvasa prikazuje se
+	//info o igru koju canvas predstavlja
 	$(".igra").on("mouseenter",function(){
 		var x = $(this).position().left;
 		var y = $(this).position().top+200;
@@ -365,15 +422,18 @@ $(document).ready(function(){
 		.css("top",y);
 	});
 
+	//suproto gornjem kodu, kad miš maknemo iz canvasa, info nestaje
 	$(".igra").on("mouseleave",function(){
 		$("#informacije").hide();
 	});
 
-
+	//u nastavku je traka(tj. div) u kojoj se mijenjaju slike igara svake 2sek
 	$("#traka").css("height",Math.floor( $(window).height()/2 )+"px");
 	$("#traka").css("cursor","pointer");
 
 	var promjenaSlike = setInterval(mijenjajSliku, 2000);
+	
+	//prikazujemo slike po redu, prva će biti nulta (ovaj -1 +1)
 	var redniBrojSlike = -1;
 	var opis = ["naslovna slika","slika za Tic-Tac-NO","slika za Vješala","slika za Stazu","slika za Upitnik"];
 	mijenjajSliku();
@@ -388,11 +448,14 @@ $(document).ready(function(){
 		+ '" />' );
 	}
 
+	//na resize, prilagodi dimenzije gornje trake
 	$(window).on("resize",function()
 	{
 		$("#traka").css("height",Math.floor( $(window).height()/2 )+"px");
 	});
 
+	//također i trake kod prikaza slike npr. igre staza, daje link na igru staza
+	//kako znam koja igra je na slici? pa imam globalnu var. redniBrojSlike
 	$("#traka").on("click",function(){
 		switch(redniBrojSlike) {
     			case 1:
