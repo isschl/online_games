@@ -249,8 +249,7 @@ $(document).ready(function(){
 
 		var poruka = '<p>Nalazite se na pitanju '
 			+ '<b style="color:blue">' 
-			+ brojPitanja + '/' 
-			+ ukupnoPitanja + '</b>'
+			+ brojPitanja + '/15 </b>'
 			+ ' Pitanje je klasificirano kao: ';
 		if( tezina === 'l' ) poruka += 'lagano';
 		else if( tezina === 's' ) 
