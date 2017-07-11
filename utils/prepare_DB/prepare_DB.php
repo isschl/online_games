@@ -93,7 +93,9 @@ try
 
 	$rijecnik = array('terminator','biblija','makroekonomija',
 	'vrtuljak','ministarstvo','akademija','jahta','stolica','pivo',
-	'fakultet','kirurg','odgovor','kiparstvo');
+	'fakultet','kirurg','odgovor','kiparstvo','ormar','avion','patuljak',
+	'automobil','putovanje','carstvo','suncokret','krevet','hodnik','pjesma',
+	'svemir','avenija','hotel','more','osiguranje');
 
 	foreach($rijecnik as $key => $value)
 		$st->execute( array( 'rijec' => $value) );
@@ -267,6 +269,87 @@ try
 		'odgovorD' => 'Hans Andresing', 
 		'odgovor' => 'B', 
 		'tezina' => 't' ) );
+
+	$st->execute( array( 
+		'pitanje' => 'Film Rajka Grli&#263;a, Ustav Republike Hrvatske, je: ',
+		'odgovorA' => 'triler',  
+		'odgovorB' => 'komedija',
+		'odgovorC' => 'horror', 
+		'odgovorD' => 'SF', 
+		'odgovor' => 'B', 
+		'tezina' => 'l' ) );
+	$st->execute( array( 
+		'pitanje' => 'Mirko je iz Zagreba, a W. A. Mozart iz: ',
+		'odgovorA' => 'Be&#269;a',  
+		'odgovorB' => 'Berlina',
+		'odgovorC' => 'Leipziga', 
+		'odgovorD' => 'Salzburga', 
+		'odgovor' => 'D', 
+		'tezina' => 'l' ) );
+	$st->execute( array( 
+		'pitanje' => 'Od 6800 jezika na svijetu, Eurpoljani koriste njih: ',
+		'odgovorA' => '569',  
+		'odgovorB' => '610',
+		'odgovorC' => '234', 
+		'odgovorD' => '112', 
+		'odgovor' => 'C', 
+		'tezina' => 't' ) );
+	$st->execute( array( 
+		'pitanje' => 'Koliko je u prosjeku psihopata na 600 ljudi? ',
+		'odgovorA' => '1',  
+		'odgovorB' => '2',
+		'odgovorC' => '3', 
+		'odgovorD' => '4', 
+		'odgovor' => 'C', 
+		'tezina' => 't' ) );
+	$st->execute( array( 
+		'pitanje' => 'Najdugovje&#269;niji ameri&#269;ki animirani sitcom ikad je: ',
+		'odgovorA' => 'The Simpsons',  
+		'odgovorB' => 'Family Guy',
+		'odgovorC' => 'Futurama', 
+		'odgovorD' => 'Gunsmoke', 
+		'odgovor' => 'A', 
+		'tezina' => 's' ) );
+	$st->execute( array( 
+		'pitanje' => 'Najve&#263; dio piva sastoji se od: ',
+		'odgovorA' => 'slada',  
+		'odgovorB' => 'hmelja',
+		'odgovorC' => 'pivskog kvasca', 
+		'odgovorD' => 'vode', 
+		'odgovor' => 'D', 
+		'tezina' => 's' ) );
+	$st->execute( array( 
+		'pitanje' => 'Vjeruje se da je pivo nastalo u: ',
+		'odgovorA' => 'Babilonu',  
+		'odgovorB' => 'Egiptu',
+		'odgovorC' => 'Perziji', 
+		'odgovorD' => 'Gr&#269;koj', 
+		'odgovor' => 'A', 
+		'tezina' => 't' ) );
+	$st->execute( array( 
+		'pitanje' => 'Hrvatska abedeca zove se i gajica, po Ljudevitu Gaju, koji je kao uzor uzeo ',
+		'odgovorA' => '&#269;e&#353;ku latinicu',  
+		'odgovorB' => 'rusku latinicu',
+		'odgovorC' => 'bosansku latinicu', 
+		'odgovorD' => 'slovensku latinicu', 
+		'odgovor' => 'A', 
+		'tezina' => 'l' ) );
+	$st->execute( array( 
+		'pitanje' => 'U hrvatskom saboru prvi je govorio:',
+		'odgovorA' => 'Ivan Kukuljevi&#263; Sakcinski',  
+		'odgovorB' => 'Ljudevit Gaj',
+		'odgovorC' => 'Vlado Gotovac', 
+		'odgovorD' => 'Jan Masaryk', 
+		'odgovor' => 'A', 
+		'tezina' => 's' ) );
+	$st->execute( array( 
+		'pitanje' => 'Dostojevski: Jedna je pamet dobra, dvije su ...',
+		'odgovorA' => 'lo&#353;e.',  
+		'odgovorB' => 'jo&#353; bolje.',
+		'odgovorC' => 'najgore.', 
+		'odgovorD' => 'prosje&#269;ne.', 
+		'odgovor' => 'B', 
+		'tezina' => 't' ) );
 }
 catch( PDOException $e ) { exit( "PDO error #10: " . $e->getMessage() ); }
 
@@ -317,3 +400,4 @@ catch( PDOException $e ) { exit( "PDO error #3: " . $e->getMessage() ); }
 echo "Ubacio sudokue u tablicu sudokua.<br />";
 
 ?> 
+

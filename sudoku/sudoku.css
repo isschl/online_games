@@ -33,12 +33,16 @@ table { margin: 0 auto; }
 
 #hTable { margin-top: 100px; }
 
+#hTable { margin-top: 100px; }
+
 .hRank, .hName, .hScore {
     height: 40px;
     border: 1px solid black;
     background-color: #ffffff;
     text-align: center;
+	font-size: 20px;
 }
+.hRank { width: 40px; }
 .hName { width: 200px; }
 .hScore { width: 100px; }
 
@@ -67,7 +71,8 @@ table { margin: 0 auto; }
     width: 240px;
     height: 60px;
     margin: 0 auto;
-    border-radius: 25px;
+	margin-top: 5px;
+    border-radius: 20px;
     border: 2px solid #000000;
     text-align: center;
     font-size: 40px;
@@ -76,15 +81,11 @@ table { margin: 0 auto; }
 }
 #play {
     background-color: #00ff00;
-    margin-top: 110px;
-}
-#settings {
-    background-color: #123456;
+    margin-top: 160px;
 }
 #highscores {
     background-color: #a0000f;
 }
-#help { background-color: #ff00ff; }
 
 #back {
     width: 100px;
@@ -111,10 +112,11 @@ table { margin: 0 auto; }
 	margin-left: 40%;
 }
 
-#overlay {
+.overlay {
 	position: absolute;
 	width: 100%;
 	height: 100%;
+	top: 0px;
 	background-color: black;
 	opacity: 0.75;
 }
@@ -131,13 +133,13 @@ table { margin: 0 auto; }
 }
 
 #helpText {
-    position: relative;
-    width: 80%;
-    height: 80%;
+    position: absolute;
+    width: 50%;
+    height: 100%;
     text-align: left;
     font-size: 20px;
-    padding-left: 10%;
-    padding-top: 10%;
+    left: 25%;
+    top: 120px;
 }
 
 .subtitle {
@@ -165,16 +167,54 @@ input {
 	width: 100px;
 	padding-left: 5px;
 	padding-top: 5px;
-	background-color: pink;
+	background-color: white;
+	opacity: 0.8;
 }
 
 .choice {
 	width: 30px;
 	height: 30px;
+	opacity: 0.8;
 	cursor: pointer;
 }
 
-#gotov {
+.gameButton {
+	cursor: pointer;
+}
+#done {
+	cursor: pointer;
 	position: absolute;
 	right: 0px;
+}
+#continue {
+	cursor: pointer;
+	position: absolute;
+	right: 0px;
+	top: 100px;
+}
+
+#timecnv {
+	position: absolute;
+	width: 20vw;
+	height: 12vw;
+	left: 75%;
+	top: 50px;
+}
+
+#notescnv {
+	position: absolute;
+	width: 20%;
+	height: 300px;
+	top: 100px;
+	left: 50px;
+	background-color: white;
+	border: 1px solid black;
+	border-radius: 10px;
+}
+
+#clearNote {
+	position: absolute;
+	width: 50px;
+	height: 20px;
+	top: 80%	
 }

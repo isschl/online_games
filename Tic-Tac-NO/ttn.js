@@ -12,6 +12,7 @@ var player2 = "AI"; // default player2 name
 var player2Color = "blue";
 var playerColors = "pc1";
 var currentPlayer = -1;
+var winner = -1;
 var playingField = {"row":-1,"column":-1};
 var highscores = [{"player": "","score":0},{"player": "","score":0},{"player": "","score":0},{"player": "","score":0},{"player": "","score":0}];
 var moveCount = 41;
@@ -250,6 +251,12 @@ function processMove(row,column)
 		$("#p1").css("visibility", "visible");
 		$("#p2").css("visibility", "hidden");
 	}
+
+	// deal with tie
+	if(moveCount <= 0) {
+		winner = 0;
+		drawGameOver();
+	}
 }
 
 /*==============================================  SCREEN INITIALIZERS  ===============================================*/
@@ -320,7 +327,15 @@ function drawGameOver()
 	// add overlay
 	container.append("<div class='overlay'></div>");
 	
-	var winner = (currentPlayer == -1) ? player1 : player2;
+	// if tie
+	if(winner == 0) {
+		// append win text
+		container.append("<div id='gameOver'><span class='subtitle'>KRAJ IGRE!</span><br>Nema pobjednika.</div>");
+	$("#gameOver").css("top", "100px");
+		return;
+	}
+	
+	winner = (currentPlayer == -1) ? player1 : player2;
 	// append win text
 	container.append("<div id='gameOver'><span class='subtitle'>KRAJ IGRE!</span><br>" + winner + ((winner == "Ti") ? " si" : " te") + " pobijedio u " + (41-moveCount+1) + " poteza.</div>");
 	$("#gameOver").css("top", "100px");
