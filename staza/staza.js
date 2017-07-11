@@ -149,7 +149,7 @@ function ispuniTablicu()
 	$.ajax(
 	{
 		url : "../utils/dohvatiListu.php",
-		data : { title : "Upitnik" },
+		data : { title : "Staza" },
 		type: "POST",
 		success: function(data)
 		{
